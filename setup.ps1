@@ -1,55 +1,56 @@
-# Priyanshu PC Setup Toolkit Bootstrap Script
-
-function Ensure-Winget {
+# Ensure Winget and Chocolatey are installed (basic check, can be improved)
+function Ensure-PackageManagers {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "❌ Winget not found. Please install it manually: https://aka.ms/getwinget" -ForegroundColor Red
-        Start-Process "https://aka.ms/getwinget"
-        exit
+        Write-Host "[!] Winget not found. Please install Winget manually from the Microsoft Store." -ForegroundColor Red
     }
-}
 
-function Ensure-Choco {
     if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Host "🍫 Installing Chocolatey..." -ForegroundColor Yellow
         Set-ExecutionPolicy Bypass -Scope Process -Force
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     }
 }
 
+# Start the local HTTP listener
 function Start-Listener {
-@"
-`$listener = [System.Net.HttpListener]::new()
-`$listener.Prefixes.Add('http://localhost:54321/')
-`$listener.Start()
-Write-Host '🔁 Listening on http://localhost:54321 ...'
+    Add-Type -AssemblyName System.Net.HttpListener
+    $global:listener = New-Object System.Net.HttpListener
+    $listener.Prefixes.Add("http://localhost:3422/")
+    $listener.Start()
+    Write-Host "[+] Listener started at http://localhost:3422/"
 
-while ($true) {
-    `$context = `$listener.GetContext()
-    `$app = `$context.Request.QueryString['app']
-    `$response = `$context.Response
+    while ($listener.IsListening) {
+        $context = $listener.GetContext()
+        $request = $context.Request
+        $response = $context.Response
 
-    if (`$app) {
-        Write-Host "📦 Installing: `$app"
-        Start-Process "winget" -ArgumentList "install `$app --silent --accept-source-agreements --accept-package-agreements" -NoNewWindow
-        `$msg = [System.Text.Encoding]::UTF8.GetBytes("Installing `$app")
-    } else {
-        `$msg = [System.Text.Encoding]::UTF8.GetBytes("No app specified")
+        $path = $request.RawUrl.TrimStart('/')
+
+        switch ($path) {
+            "ping" {
+                $content = '{ "status": "ok" }'
+                $response.ContentType = "application/json"
+            }
+            "install/winrar" {
+                Start-Process "choco" -ArgumentList "install winrar -y" -NoNewWindow
+                $content = '{ "status": "installed", "package": "winrar" }'
+                $response.ContentType = "application/json"
+            }
+            default {
+                $content = "Invalid route: $path"
+                $response.StatusCode = 404
+            }
+        }
+
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($content)
+        $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $response.Close()
     }
-
-    `$response.OutputStream.Write(`$msg, 0, `$msg.Length)
-    `$response.Close()
-}
-"@ | Set-Content "$env:TEMP\\listener.ps1"
-Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -File `"$env:TEMP\\listener.ps1`"" -WindowStyle Minimized
 }
 
-function Launch-Web {
-    Start-Sleep -Seconds 2
-    Start-Process "https://Priyanshu8494.github.io/pc-setup-dashboard/"
-}
+# Main Entry
+Ensure-PackageManagers
 
-# MAIN
-Ensure-Winget
-Ensure-Choco
+Start-Sleep -Seconds 2
+Start-Process "http://localhost:3422/index.html"
+
 Start-Listener
-Launch-Web
