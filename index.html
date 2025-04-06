@@ -2,32 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Priyanshu PC Setup</title>
+  <title>PC Setup Dashboard</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #1e1e2f; color: white; padding-top: 50px; }
-    h1 { color: #f1c40f; }
-    button {
-      margin: 10px; padding: 15px 30px; font-size: 18px;
-      background: #3498db; color: white; border: none; border-radius: 8px;
-      cursor: pointer; transition: background 0.3s;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f1117;
+      color: #ffffff;
+      text-align: center;
+      padding: 40px;
     }
-    button:hover { background: #2980b9; }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #00d9ff;
+    }
+    .button {
+      background: #00d9ff;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .button:hover {
+      background-color: #00a3cc;
+    }
+    .status {
+      margin-top: 20px;
+      font-size: 14px;
+    }
   </style>
-</head>
-<body>
-  <h1>Priyanshu's PC Setup Toolkit</h1>
-  <p>Click a software to install:</p>
-  <button onclick="install('Google.Chrome')">Install Chrome</button>
-  <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
-  <button onclick="install('VideoLAN.VLC')">Install VLC</button>
-
   <script>
-    function install(app) {
-      fetch(`http://localhost:54321/?app=${app}`)
-        .then(res => res.text())
-        .then(alert)
-        .catch(() => alert("Listener not running! Please restart the PowerShell script."));
+    function install(pkg) {
+      fetch(`http://localhost:3422/install/${pkg}`)
+        .then(res => res.json())
+        .then(data => {
+          alert(`✅ ${pkg} installed successfully!`);
+          document.getElementById("status").innerText = `${pkg} installed.`;
+        })
+        .catch(err => {
+          alert("❌ Listener not running. Please rerun the PowerShell script.");
+          document.getElementById("status").innerText = `Error installing ${pkg}`;
+        });
     }
   </script>
+</head>
+<body>
+  <h1>💻 PC Setup Dashboard</h1>
+
+  <button class="button" onclick="install('winrar')">Install WinRAR</button>
+  <button class="button" onclick="install('googlechrome')">Install Google Chrome</button>
+  <button class="button" onclick="install('vscode')">Install VSCode</button>
+  <button class="button" onclick="install('notepadplusplus')">Install Notepad++</button>
+
+  <div id="status" class="status"></div>
 </body>
 </html>
