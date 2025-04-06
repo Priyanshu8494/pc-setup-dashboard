@@ -1,63 +1,49 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PC Setup Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Priyanshu PC Setup Toolkit</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0f1117;
-      color: #ffffff;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
       text-align: center;
-      padding: 40px;
+      padding-top: 50px;
     }
     h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-      color: #00d9ff;
+      color: #f1c40f;
     }
-    .button {
-      background: #00d9ff;
-      color: #000;
+    button {
+      background: #3498db;
+      color: white;
       border: none;
       padding: 15px 30px;
       margin: 10px;
       font-size: 16px;
       border-radius: 10px;
       cursor: pointer;
-      transition: 0.3s;
     }
-    .button:hover {
-      background-color: #00a3cc;
-    }
-    .status {
-      margin-top: 20px;
-      font-size: 14px;
+    button:hover {
+      background: #2980b9;
     }
   </style>
-  <script>
-    function install(pkg) {
-      fetch(`http://localhost:3422/install/${pkg}`)
-        .then(res => res.json())
-        .then(data => {
-          alert(`✅ ${pkg} installed successfully!`);
-          document.getElementById("status").innerText = `${pkg} installed.`;
-        })
-        .catch(err => {
-          alert("❌ Listener not running. Please rerun the PowerShell script.");
-          document.getElementById("status").innerText = `Error installing ${pkg}`;
-        });
-    }
-  </script>
 </head>
 <body>
-  <h1>💻 PC Setup Dashboard</h1>
+  <h1>💻 Priyanshu's PC Setup Toolkit</h1>
+  <p>Click a button to install software silently:</p>
 
-  <button class="button" onclick="install('winrar')">Install WinRAR</button>
-  <button class="button" onclick="install('googlechrome')">Install Google Chrome</button>
-  <button class="button" onclick="install('vscode')">Install VSCode</button>
-  <button class="button" onclick="install('notepadplusplus')">Install Notepad++</button>
+  <button onclick="install('Google.Chrome')">Install Chrome</button>
+  <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
+  <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
 
-  <div id="status" class="status"></div>
+  <script>
+    function install(pkg) {
+      fetch(`http://localhost:3422/install?pkg=${pkg}`)
+        .then(res => alert(`Install command sent for ${pkg}`))
+        .catch(err => alert("Listener not responding!"));
+    }
+  </script>
 </body>
 </html>
