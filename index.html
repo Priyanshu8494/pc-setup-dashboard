@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Priyanshu PC Setup</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #1e1e2f; color: white; padding-top: 50px; }
+    h1 { color: #f1c40f; }
+    button {
+      margin: 10px; padding: 15px 30px; font-size: 18px;
+      background: #3498db; color: white; border: none; border-radius: 8px;
+      cursor: pointer; transition: background 0.3s;
+    }
+    button:hover { background: #2980b9; }
+  </style>
+</head>
+<body>
+  <h1>Priyanshu's PC Setup Toolkit</h1>
+  <p>Click a software to install:</p>
+  <button onclick="install('Google.Chrome')">Install Chrome</button>
+  <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
+  <button onclick="install('VideoLAN.VLC')">Install VLC</button>
+
+  <script>
+    function install(app) {
+      fetch(`http://localhost:54321/?app=${app}`)
+        .then(res => res.text())
+        .then(alert)
+        .catch(() => alert("Listener not running! Please restart the PowerShell script."));
+    }
+  </script>
+</body>
+</html>
