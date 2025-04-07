@@ -2,26 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Priyanshu PC Setup Toolkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Priyanshu's PC Setup Toolkit</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
       text-align: center;
-      padding-top: 50px;
+      margin-top: 100px;
     }
-    h1 {
-      color: #f1c40f;
-    }
+    h1 { color: gold; }
     button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
       background: #3498db;
       color: white;
       border: none;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 16px;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
     }
     button:hover {
@@ -31,17 +30,23 @@
 </head>
 <body>
   <h1>💻 Priyanshu's PC Setup Toolkit</h1>
-  <p>Click a button to install software silently:</p>
-
-  <button onclick="install('Google.Chrome')">Install Chrome</button>
+  <p>Click to install:</p>
   <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
+  <button onclick="install('Google.Chrome')">Install Chrome</button>
   <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
 
   <script>
-    function install(pkg) {
-      fetch(`/install?pkg=${pkg}`)
-        .then(() => alert(`✅ Install command sent for ${pkg}`))
-        .catch(() => alert("❌ Listener not responding!"));
+    async function install(pkg) {
+      try {
+        const r = await fetch(`/install?pkg=${pkg}`);
+        if (r.ok) {
+          alert("✅ Install command sent for " + pkg);
+        } else {
+          alert("❌ Failed to send install command.");
+        }
+      } catch (err) {
+        alert("❌ Could not connect to local server. Is the script running?");
+      }
     }
   </script>
 </body>
