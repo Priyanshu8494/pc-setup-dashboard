@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,23 +36,21 @@
   <button onclick="install('Google.Chrome')">Install Chrome</button>
   <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
   <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
-
-  <p id="status"></p>
+  <button onclick="install('Notepad++.Notepad++')">Install Notepad++</button>
+  <button onclick="install('7zip.7zip')">Install 7-Zip</button>
+  <button onclick="install('Spotify.Spotify')">Install Spotify</button>
 
   <script>
     function install(pkg) {
-      document.getElementById("status").innerText = `⏳ Installing ${pkg}...`;
-      fetch(`http://localhost:3422/install?pkg=${encodeURIComponent(pkg)}`)
+      fetch(`http://localhost:3422/install?pkg=${pkg}`)
         .then(res => {
           if (res.ok) {
-            document.getElementById("status").innerText = `✅ Install command sent for ${pkg}`;
+            alert(`✅ Install command sent for ${pkg}`);
           } else {
-            document.getElementById("status").innerText = `❌ Failed to send install command for ${pkg}`;
+            alert("❌ Something went wrong");
           }
         })
-        .catch(err => {
-          document.getElementById("status").innerText = "❌ Listener not running! Please restart the PowerShell script.";
-        });
+        .catch(err => alert("⚠️ Listener not responding. Please restart PowerShell script."));
     }
   </script>
 </body>
