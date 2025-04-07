@@ -1,10 +1,10 @@
 # setup.ps1
-# Run this via:
+# Run via:
 # irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "❌ Winget not found. Please install manually from https://aka.ms/getwinget" -ForegroundColor Red
+        Write-Host "❌ Winget not found. Please install it from https://aka.ms/getwinget" -ForegroundColor Red
         pause
         exit
     }
@@ -30,6 +30,7 @@ function Start-WebListener {
 
     $listener = New-Object System.Net.HttpListener
     $listener.Prefixes.Add("http://localhost:$port/")
+    
     try {
         $listener.Start()
         Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
@@ -46,14 +47,32 @@ function Start-WebListener {
                 $response.ContentType = "text/html"
                 $response.ContentLength64 = $buffer.Length
                 $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            } else {
+            }
+            elseif ($request.Url.AbsolutePath -eq "/install") {
+                $pkg = $request.QueryString["pkg"]
+                if ($pkg) {
+                    Start-Job {
+                        param($pkgId)
+                        Start-Process -FilePath "winget" -ArgumentList "install", "$pkgId", "--silent", "--accept-source-agreements", "--accept-package-agreements" -NoNewWindow -Wait
+                    } -ArgumentList $pkg | Out-Null
+
+                    $msg = "Installing $pkg silently..."
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
+                    $response.ContentType = "text/plain"
+                    $response.ContentLength64 = $buffer.Length
+                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
+                } else {
+                    $response.StatusCode = 400
+                }
+            }
+            else {
                 $response.StatusCode = 404
             }
 
             $response.OutputStream.Close()
         }
     } catch {
-        Write-Host "❌ Failed to start listener. Try running as Administrator." -ForegroundColor Red
+        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator." -ForegroundColor Red
     }
 }
 
