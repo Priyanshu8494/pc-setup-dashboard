@@ -1,8 +1,9 @@
-# Priyanshu's PC Setup Listener Script
+# Priyanshu's PC Setup Toolkit - setup.ps1
+# Run using: irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "❌ Winget not found. Please install manually: https://aka.ms/getwinget" -ForegroundColor Red
+        Write-Host "❌ Winget not found. Please install manually from https://aka.ms/getwinget" -ForegroundColor Red
         pause
         exit
     }
@@ -17,22 +18,25 @@ function Ensure-Chocolatey {
     }
 }
 
-function Start-WebListener {
-    $port = 3422
-
-    # Fallback if $MyInvocation is null (when run via `iex`)
-    $scriptDir = if ($MyInvocation.MyCommand.Path) {
-        Split-Path -Parent $MyInvocation.MyCommand.Path
-    } else {
-        $env:TEMP
+function Get-FreePort {
+    $tcpListeners = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
+    for ($p = 3422; $p -lt 3500; $p++) {
+        if ($tcpListeners -notcontains $p) { return $p }
     }
+    throw "❌ No free port available between 3422–3500."
+}
 
+function Start-WebListener {
+    $port = Get-FreePort
+
+    # Get correct path to index.html even if script is run via iex
+    $scriptDir = $PSScriptRoot
+    if (-not $scriptDir) { $scriptDir = Get-Location }
     $htmlPath = Join-Path $scriptDir "index.html"
 
-    # Download index.html if it doesn't exist
     if (-not (Test-Path $htmlPath)) {
-        Write-Host "🌐 Downloading index.html from GitHub..." -ForegroundColor Cyan
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html" -OutFile $htmlPath
+        Write-Host "❌ index.html not found in: $htmlPath" -ForegroundColor Red
+        return
     }
 
     $listener = New-Object System.Net.HttpListener
@@ -40,7 +44,7 @@ function Start-WebListener {
 
     try {
         $listener.Start()
-        Write-Host "`n✅ Listener started at http://localhost:$port" -ForegroundColor Green
+        Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
         Start-Process "http://localhost:$port"
 
         while ($listener.IsListening) {
@@ -58,15 +62,13 @@ function Start-WebListener {
             elseif ($request.Url.AbsolutePath -eq "/install") {
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
-                    Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command `"winget install --id $pkg -e --accept-source-agreements --accept-package-agreements`""
-                    $message = "Installing $pkg"
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($message)
+                    Write-Host "📦 Installing $pkg via winget..."
+                    Start-Process "winget" -ArgumentList "install --id $pkg --silent --accept-source-agreements --accept-package-agreements" -NoNewWindow
                     $response.StatusCode = 200
-                    $response.ContentType = "text/plain"
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
                 } else {
                     $response.StatusCode = 400
                 }
+                $response.OutputStream.Write([byte[]]::new(0), 0, 0)
             }
             else {
                 $response.StatusCode = 404
@@ -75,11 +77,11 @@ function Start-WebListener {
             $response.OutputStream.Close()
         }
     } catch {
-        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator or freeing port $port." -ForegroundColor Red
+        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator or check your firewall." -ForegroundColor Red
     }
 }
 
-# 🛠️ Main Execution
+# MAIN
 Ensure-Winget
 Ensure-Chocolatey
 Start-WebListener
