@@ -1,58 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Priyanshu PC Setup Toolkit</title>
+  <meta charset="UTF-8">
+  <title>Priyanshu's PC Setup Toolkit</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
+      background-color: #111;
+      color: #f5f5f5;
+      font-family: sans-serif;
       text-align: center;
       padding-top: 50px;
     }
     h1 {
-      color: #f1c40f;
+      font-size: 2em;
+      color: gold;
     }
     button {
-      background: #3498db;
+      padding: 15px 25px;
+      margin: 10px;
+      font-size: 1rem;
+      background-color: #3498db;
       color: white;
       border: none;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 16px;
       border-radius: 10px;
       cursor: pointer;
     }
     button:hover {
-      background: #2980b9;
-    }
-    .copied {
-      color: #2ecc71;
-      font-weight: bold;
-      margin-top: 15px;
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
   <h1>💻 Priyanshu's PC Setup Toolkit</h1>
-  <p>Click a button to copy the PowerShell install command:</p>
+  <p>Click a button to download and run the installer script:</p>
 
-  <button onclick="copyCommand('winrar')">Install WinRAR</button>
-  <button onclick="copyCommand('chrome')">Install Chrome</button>
-  <button onclick="copyCommand('vscode')">Install VS Code</button>
-
-  <p class="copied" id="status"></p>
-
-  <script>
-    function copyCommand(pkg) {
-      const command = `irm https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/installers/${pkg}.ps1 | iex`;
-      navigator.clipboard.writeText(command).then(() => {
-        document.getElementById('status').innerText = `✅ Copied install command for ${pkg} to clipboard!`;
-      }).catch(err => {
-        document.getElementById('status').innerText = "❌ Failed to copy!";
-      });
-    }
-  </script>
+  <a href="launchers/winrar-launcher.ps1" download>
+    <button>Install WinRAR</button>
+  </a>
+  <a href="launchers/chrome-launcher.ps1" download>
+    <button>Install Chrome</button>
+  </a>
+  <a href="launchers/vscode-launcher.ps1" download>
+    <button>Install VS Code</button>
+  </a>
 </body>
 </html>
