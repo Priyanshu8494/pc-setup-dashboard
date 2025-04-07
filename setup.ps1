@@ -25,7 +25,7 @@ function Ensure-Chocolatey {
 
 function Start-WebListener {
     $port = Get-FreePort
-    $htmlUrl = "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html"
+    $htmlUrl = "https://priyanshu8494.github.io/pc-setup-dashboard/index.html"
     $htmlPath = "$env:TEMP\index.html"
 
     try {
