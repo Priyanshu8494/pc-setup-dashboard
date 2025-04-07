@@ -2,51 +2,265 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Priyanshu's PC Setup Toolkit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PC Setup Toolkit</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --card: rgba(255, 255, 255, 0.05);
+      --card-hover: rgba(255, 255, 255, 0.1);
+      --text: #e4e4e4;
+      --accent: #00fff7;
+      --header: rgba(0, 0, 0, 0.75);
+    }
+
+    [data-theme="light"] {
+      --bg1: #f2f2f2;
+      --bg2: #e6e6e6;
+      --bg3: #cccccc;
+      --card: rgba(0, 0, 0, 0.05);
+      --card-hover: rgba(0, 0, 0, 0.1);
+      --text: #1a1a1a;
+      --accent: #0077ff;
+      --header: rgba(255, 255, 255, 0.85);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
     body {
-      background: #111;
-      color: #eee;
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 100px;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 600% 600%;
+      animation: gradientMove 20s ease infinite;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
     }
-    h1 { color: gold; }
-    button {
-      margin: 10px;
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
+
+    @keyframes gradientMove {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--header);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      animation: fadeInDown 1.2s ease;
+    }
+
+    header .name {
+      font-size: 0.8rem;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .theme-toggle {
       cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--accent);
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
     }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.4s ease;
+    }
+
+    .logo:hover {
+      transform: rotate(360deg) scale(1.1);
+    }
+
+    .logo img {
+      height: 30px;
+    }
+
+    section {
+      padding: 1rem 2rem 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: var(--card);
+      border-radius: 1.2rem;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,255,255,0.08);
+      transition: all 0.4s ease;
+    }
+
+    .card:hover {
+      background: var(--card-hover);
+      box-shadow: 0 0 30px rgba(0,255,255,0.2);
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 55px;
+      height: 55px;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin: 0.3rem 0;
+    }
+
+    .card p {
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      opacity: 0.75;
+    }
+
+    button {
+      padding: 0.4rem 0.8rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
     button:hover {
-      background: #2980b9;
+      background: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #ccc;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(5px);
     }
   </style>
 </head>
 <body>
-  <h1>💻 Priyanshu's PC Setup Toolkit</h1>
-  <p>Click to install:</p>
-  <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
-  <button onclick="install('Google.Chrome')">Install Chrome</button>
-  <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
+  <header>
+    <div class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Logo">
+      <span>🚀 PC Setup Toolkit</span>
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()">🌓 Theme</div>
+    <div class="name">by Priyanshu</div>
+  </header>
+
+  <section>⚙️ Essential Tools</section>
+  <main>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/888/888870.png" alt="WinRAR">
+      <h2>WinRAR</h2>
+      <p>File archiver utility</p>
+      <button onclick="install('RARLab.WinRAR')">Install</button>
+    </div>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Chrome">
+      <h2>Google Chrome</h2>
+      <p>Fast web browser</p>
+      <button onclick="install('Google.Chrome')">Install</button>
+    </div>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/5968/5968706.png" alt="Firefox">
+      <h2>Mozilla Firefox</h2>
+      <p>Open-source browser</p>
+      <button onclick="install('Mozilla.Firefox')">Install</button>
+    </div>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Reader">
+      <h2>Adobe Reader</h2>
+      <p>Read PDF documents</p>
+      <button onclick="install('Adobe.Acrobat.Reader.64-bit')">Install</button>
+    </div>
+  </main>
+
+  <section>💻 Development Tools</section>
+  <main>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/906/906324.png" alt="VS Code">
+      <h2>Visual Studio Code</h2>
+      <p>Powerful code editor</p>
+      <button onclick="install('Microsoft.VisualStudioCode')">Install</button>
+    </div>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111288.png" alt="Git">
+      <h2>Git</h2>
+      <p>Version control system</p>
+      <button onclick="install('Git.Git')">Install</button>
+    </div>
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/919/919825.png" alt="Node.js">
+      <h2>Node.js</h2>
+      <p>JavaScript runtime</p>
+      <button onclick="install('OpenJS.NodeJS')">Install</button>
+    </div>
+  </main>
+
+  <footer>
+    Made with ⚡ by Priyanshu — <a href="https://www.linkedin.com/in/priyanshusuryavanshi" target="_blank">LinkedIn</a> • <a href="https://github.com/Priyanshu8494" target="_blank">GitHub</a>
+  </footer>
 
   <script>
-    async function install(pkg) {
-      try {
-        const r = await fetch(`/install?pkg=${pkg}`);
-        if (r.ok) {
-          alert("✅ Install command sent for " + pkg);
-        } else {
-          alert("❌ Failed to send install command.");
-        }
-      } catch (err) {
-        alert("❌ Could not connect to local server. Is the script running?");
-      }
+    function install(pkgId) {
+      fetch(`/install?pkg=${encodeURIComponent(pkgId)}`)
+        .then(response => {
+          if (response.ok) {
+            alert(`✅ ${pkgId} installation started!`);
+          } else {
+            alert(`❌ Failed to install ${pkgId}`);
+          }
+        })
+        .catch(() => alert('❌ Unable to reach the local listener.'));
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+
+    if (!document.documentElement.getAttribute('data-theme')) {
+      document.documentElement.setAttribute('data-theme', 'dark');
     }
   </script>
 </body>
