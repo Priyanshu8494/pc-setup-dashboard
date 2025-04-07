@@ -1,4 +1,4 @@
-# setup.ps1
+# Priyanshu's PC Setup Script
 # Run with:
 # irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
 
@@ -19,27 +19,24 @@ function Ensure-Chocolatey {
     }
 }
 
-function Grant-HttpPermission {
-    $port = 3422
-    $url = "http://+:$port/"
-    $check = netsh http show urlacl | Select-String $url
-    if (-not $check) {
-        try {
-            Write-Host "🛠 Granting HTTP permission using netsh..." -ForegroundColor Cyan
-            Start-Process netsh -ArgumentList "http add urlacl url=$url user=Everyone" -Verb runAs -WindowStyle Hidden -Wait
-        } catch {
-            Write-Host "❌ Failed to grant HTTP permission. Try running as Administrator." -ForegroundColor Red
-            exit
-        }
-    }
-}
-
 function Start-WebListener {
     $port = 3422
-    $htmlPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "index.html"
+
+    # If running via irm | iex, $MyInvocation.MyCommand.Path will be null
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    if (-not $scriptDir) {
+        $scriptDir = "$env:TEMP\pc-setup-dashboard"
+        if (-not (Test-Path $scriptDir)) { New-Item -ItemType Directory -Path $scriptDir | Out-Null }
+
+        $htmlUrl = "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html"
+        $htmlPath = Join-Path $scriptDir "index.html"
+        Invoke-WebRequest -Uri $htmlUrl -OutFile $htmlPath -UseBasicParsing
+    } else {
+        $htmlPath = Join-Path $scriptDir "index.html"
+    }
 
     if (-not (Test-Path $htmlPath)) {
-        Write-Host "❌ index.html not found in script directory!" -ForegroundColor Red
+        Write-Host "❌ index.html not found!" -ForegroundColor Red
         return
     }
 
@@ -56,26 +53,23 @@ function Start-WebListener {
             $request = $context.Request
             $response = $context.Response
 
-            $path = $request.Url.AbsolutePath
-            Write-Host "Received: $path"
-
-            if ($path -eq "/" -or $path -eq "/index.html") {
+            if ($request.Url.AbsolutePath -eq "/" -or $request.Url.AbsolutePath -eq "/index.html") {
                 $html = Get-Content $htmlPath -Raw
                 $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
                 $response.ContentType = "text/html"
                 $response.ContentLength64 = $buffer.Length
                 $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            } elseif ($path.StartsWith("/install")) {
-                $query = [System.Web.HttpUtility]::ParseQueryString($request.Url.Query)
-                $pkg = $query["pkg"]
+            }
+            elseif ($request.Url.AbsolutePath -eq "/install") {
+                $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
-                    Start-Process "winget" -ArgumentList "install --id $pkg --silent --accept-package-agreements --accept-source-agreements" -NoNewWindow
-                    $msg = "✅ Installing $pkg"
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
-                    $response.ContentType = "text/plain"
-                    $response.ContentLength64 = $buffer.Length
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
+                    Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command winget install --id `"$pkg`" -e --silent" -Verb RunAs
+                    $response.StatusCode = 200
+                } else {
+                    $response.StatusCode = 400
                 }
+                $response.OutputStream.Close()
+                continue
             } else {
                 $response.StatusCode = 404
             }
@@ -83,12 +77,12 @@ function Start-WebListener {
             $response.OutputStream.Close()
         }
     } catch {
-        Write-Host "❌ Failed to start listener. Try running as Administrator." -ForegroundColor Red
+        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator or freeing port 3422." -ForegroundColor Red
     }
 }
 
-# ==== MAIN ====
+# ---- Run the script ----
+
 Ensure-Winget
 Ensure-Chocolatey
-Grant-HttpPermission
 Start-WebListener
