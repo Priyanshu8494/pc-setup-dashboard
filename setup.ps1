@@ -1,9 +1,15 @@
-# setup.ps1
-# Run via: irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
+function Get-FreePort {
+    $tcpListeners = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
+    for ($p = 3422; $p -lt 3500; $p++) {
+        if ($tcpListeners -notcontains $p) { return $p }
+    }
+    throw "❌ No free port available between 3422–3500."
+}
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "❌ Winget not found. Please install it manually from https://aka.ms/getwinget" -ForegroundColor Red
+        Write-Host "❌ Winget not found. Please install manually from https://aka.ms/getwinget" -ForegroundColor Red
+        pause
         exit
     }
 }
@@ -17,30 +23,24 @@ function Ensure-Chocolatey {
     }
 }
 
-function Get-FreePort {
-    $usedPorts = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
-    for ($p = 3422; $p -le 3500; $p++) {
-        if ($usedPorts -notcontains $p) {
-            return $p
-        }
-    }
-    throw "❌ No free ports available in 3422–3500 range."
-}
-
 function Start-WebListener {
-    $scriptDir = $PSScriptRoot
-    if (-not $scriptDir) {
-        $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+    $port = Get-FreePort
+    $htmlUrl = "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html"
+    $htmlPath = "$env:TEMP\index.html"
+
+    try {
+        Invoke-WebRequest $htmlUrl -OutFile $htmlPath -UseBasicParsing
+    } catch {
+        Write-Host "❌ Failed to download index.html" -ForegroundColor Red
+        return
     }
 
-    $htmlPath = Join-Path $scriptDir "index.html"
     if (-not (Test-Path $htmlPath)) {
-        Write-Host "❌ index.html not found in $scriptDir" -ForegroundColor Red
+        Write-Host "❌ index.html could not be loaded!" -ForegroundColor Red
         return
     }
 
     try {
-        $port = Get-FreePort
         $listener = New-Object System.Net.HttpListener
         $listener.Prefixes.Add("http://localhost:$port/")
         $listener.Start()
@@ -61,14 +61,9 @@ function Start-WebListener {
             } elseif ($request.Url.AbsolutePath -like "/install") {
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
-                    Start-Process "winget" -ArgumentList "install --id=$pkg -e --silent" -WindowStyle Hidden
-                    $response.StatusCode = 200
-                    $msg = "Installing $pkg"
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
-                } else {
-                    $response.StatusCode = 400
+                    Start-Process "powershell" "-NoProfile -WindowStyle Hidden -Command winget install --id $pkg --silent" -Verb RunAs
                 }
+                $response.StatusCode = 200
             } else {
                 $response.StatusCode = 404
             }
@@ -80,7 +75,7 @@ function Start-WebListener {
     }
 }
 
-# ---- MAIN START ----
+# Main Execution
 Ensure-Winget
 Ensure-Chocolatey
 Start-WebListener
