@@ -1,10 +1,9 @@
-# setup.ps1
 # Run via:
 # irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "❌ Winget not found. Please install it from https://aka.ms/getwinget" -ForegroundColor Red
+        Write-Host "❌ Winget not found. Please install manually from https://aka.ms/getwinget" -ForegroundColor Red
         pause
         exit
     }
@@ -21,16 +20,17 @@ function Ensure-Chocolatey {
 
 function Start-WebListener {
     $port = 3422
-    $htmlPath = Join-Path $PSScriptRoot "index.html"
+    $tempFolder = "$env:TEMP\pc-setup-dashboard"
+    New-Item -ItemType Directory -Path $tempFolder -Force | Out-Null
 
-    if (-not (Test-Path $htmlPath)) {
-        Write-Host "❌ index.html not found in script directory!" -ForegroundColor Red
-        return
-    }
+    $htmlPath = Join-Path $tempFolder "index.html"
+    $htmlUrl = "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html"
+    
+    Invoke-WebRequest -Uri $htmlUrl -OutFile $htmlPath -UseBasicParsing
 
     $listener = New-Object System.Net.HttpListener
     $listener.Prefixes.Add("http://localhost:$port/")
-    
+
     try {
         $listener.Start()
         Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
@@ -47,25 +47,13 @@ function Start-WebListener {
                 $response.ContentType = "text/html"
                 $response.ContentLength64 = $buffer.Length
                 $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            }
-            elseif ($request.Url.AbsolutePath -eq "/install") {
+            } elseif ($request.Url.AbsolutePath -eq "/install") {
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
-                    Start-Job {
-                        param($pkgId)
-                        Start-Process -FilePath "winget" -ArgumentList "install", "$pkgId", "--silent", "--accept-source-agreements", "--accept-package-agreements" -NoNewWindow -Wait
-                    } -ArgumentList $pkg | Out-Null
-
-                    $msg = "Installing $pkg silently..."
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
-                    $response.ContentType = "text/plain"
-                    $response.ContentLength64 = $buffer.Length
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
-                } else {
-                    $response.StatusCode = 400
+                    Start-Process -NoNewWindow -FilePath "winget" -ArgumentList "install --id $pkg -e --silent"
                 }
-            }
-            else {
+                $response.StatusCode = 200
+            } else {
                 $response.StatusCode = 404
             }
 
