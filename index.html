@@ -2,68 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Priyanshu's PC Setup Toolkit</title>
+  <title>Priyanshu PC Setup Toolkit</title>
   <style>
     body {
-      background-color: #111;
-      color: #f5f5f5;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
       text-align: center;
-      padding: 2rem;
+      padding-top: 50px;
     }
     h1 {
-      color: gold;
-      margin-bottom: 1rem;
+      color: #f1c40f;
     }
     button {
-      margin: 0.5rem;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      background-color: #3498db;
+      background: #3498db;
       color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.2s;
     }
     button:hover {
-      background-color: #2980b9;
-    }
-    #status {
-      margin-top: 1rem;
-      color: #2ecc71;
+      background: #2980b9;
     }
   </style>
 </head>
 <body>
   <h1>💻 Priyanshu's PC Setup Toolkit</h1>
-  <p>Click to install apps silently:</p>
-  <div>
-    <button onclick="install('winrar')">Install WinRAR</button>
-    <button onclick="install('chrome')">Install Chrome</button>
-    <button onclick="install('vscode')">Install VS Code</button>
-  </div>
-  <div id="status"></div>
+  <p>Click a button to install software silently:</p>
+
+  <button onclick="install('Google.Chrome')">Install Chrome</button>
+  <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
+  <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
+
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const port = urlParams.get('port') || 3422;
-
-    async function install(pkg) {
-      const status = document.getElementById('status');
-      status.textContent = `⏳ Installing ${pkg}...`;
-
-      try {
-        const res = await fetch(`http://localhost:${port}/install?pkg=${pkg}`);
-        const txt = await res.text();
-        if (res.ok) {
-          status.textContent = `✅ Installed ${pkg} successfully.`;
-        } else {
-          throw new Error(txt);
-        }
-      } catch (err) {
-        status.textContent = `❌ Failed to install ${pkg}: ${err.message}`;
-      }
+    function install(pkg) {
+      fetch(`/install?pkg=${pkg}`)
+        .then(() => alert(`✅ Install command sent for ${pkg}`))
+        .catch(() => alert("❌ Listener not responding!"));
     }
   </script>
 </body>
