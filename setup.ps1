@@ -1,4 +1,5 @@
-# Run via:
+# setup.ps1
+# Run with:
 # irm "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/setup.ps1" | iex
 
 function Ensure-Winget {
@@ -18,15 +19,29 @@ function Ensure-Chocolatey {
     }
 }
 
+function Grant-HttpPermission {
+    $port = 3422
+    $url = "http://+:$port/"
+    $check = netsh http show urlacl | Select-String $url
+    if (-not $check) {
+        try {
+            Write-Host "🛠 Granting HTTP permission using netsh..." -ForegroundColor Cyan
+            Start-Process netsh -ArgumentList "http add urlacl url=$url user=Everyone" -Verb runAs -WindowStyle Hidden -Wait
+        } catch {
+            Write-Host "❌ Failed to grant HTTP permission. Try running as Administrator." -ForegroundColor Red
+            exit
+        }
+    }
+}
+
 function Start-WebListener {
     $port = 3422
-    $tempFolder = "$env:TEMP\pc-setup-dashboard"
-    New-Item -ItemType Directory -Path $tempFolder -Force | Out-Null
+    $htmlPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "index.html"
 
-    $htmlPath = Join-Path $tempFolder "index.html"
-    $htmlUrl = "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html"
-    
-    Invoke-WebRequest -Uri $htmlUrl -OutFile $htmlPath -UseBasicParsing
+    if (-not (Test-Path $htmlPath)) {
+        Write-Host "❌ index.html not found in script directory!" -ForegroundColor Red
+        return
+    }
 
     $listener = New-Object System.Net.HttpListener
     $listener.Prefixes.Add("http://localhost:$port/")
@@ -41,18 +56,26 @@ function Start-WebListener {
             $request = $context.Request
             $response = $context.Response
 
-            if ($request.Url.AbsolutePath -eq "/" -or $request.Url.AbsolutePath -eq "/index.html") {
+            $path = $request.Url.AbsolutePath
+            Write-Host "Received: $path"
+
+            if ($path -eq "/" -or $path -eq "/index.html") {
                 $html = Get-Content $htmlPath -Raw
                 $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
                 $response.ContentType = "text/html"
                 $response.ContentLength64 = $buffer.Length
                 $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            } elseif ($request.Url.AbsolutePath -eq "/install") {
-                $pkg = $request.QueryString["pkg"]
+            } elseif ($path.StartsWith("/install")) {
+                $query = [System.Web.HttpUtility]::ParseQueryString($request.Url.Query)
+                $pkg = $query["pkg"]
                 if ($pkg) {
-                    Start-Process -NoNewWindow -FilePath "winget" -ArgumentList "install --id $pkg -e --silent"
+                    Start-Process "winget" -ArgumentList "install --id $pkg --silent --accept-package-agreements --accept-source-agreements" -NoNewWindow
+                    $msg = "✅ Installing $pkg"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
+                    $response.ContentType = "text/plain"
+                    $response.ContentLength64 = $buffer.Length
+                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
                 }
-                $response.StatusCode = 200
             } else {
                 $response.StatusCode = 404
             }
@@ -60,11 +83,12 @@ function Start-WebListener {
             $response.OutputStream.Close()
         }
     } catch {
-        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator." -ForegroundColor Red
+        Write-Host "❌ Failed to start listener. Try running as Administrator." -ForegroundColor Red
     }
 }
 
-# Main Execution
+# ==== MAIN ====
 Ensure-Winget
 Ensure-Chocolatey
+Grant-HttpPermission
 Start-WebListener
