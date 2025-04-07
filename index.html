@@ -38,11 +38,22 @@
   <button onclick="install('RARLab.WinRAR')">Install WinRAR</button>
   <button onclick="install('Microsoft.VisualStudioCode')">Install VS Code</button>
 
+  <p id="status"></p>
+
   <script>
     function install(pkg) {
-      fetch(`http://localhost:3422/install?pkg=${pkg}`)
-        .then(res => alert(`Install command sent for ${pkg}`))
-        .catch(err => alert("Listener not responding!"));
+      document.getElementById("status").innerText = `⏳ Installing ${pkg}...`;
+      fetch(`http://localhost:3422/install?pkg=${encodeURIComponent(pkg)}`)
+        .then(res => {
+          if (res.ok) {
+            document.getElementById("status").innerText = `✅ Install command sent for ${pkg}`;
+          } else {
+            document.getElementById("status").innerText = `❌ Failed to send install command for ${pkg}`;
+          }
+        })
+        .catch(err => {
+          document.getElementById("status").innerText = "❌ Listener not running! Please restart the PowerShell script.";
+        });
     }
   </script>
 </body>
