@@ -21,22 +21,16 @@ function Ensure-Chocolatey {
 
 function Get-FreePort {
     $usedPorts = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
-    for ($port = 3422; $port -lt 3500; $port++) {
-        if ($usedPorts -notcontains $port) { return $port }
+    for ($p = 3422; $p -lt 3500; $p++) {
+        if ($usedPorts -notcontains $p) { return $p }
     }
-    throw "❌ No free ports available between 3422–3500."
+    throw "❌ No free port available between 3422–3500."
 }
 
 function Start-WebListener {
     try {
-        $scriptDir = (Split-Path -Parent $MyInvocation.MyCommand.Path)
-        $htmlPath = Join-Path $scriptDir "index.html"
-        if (-not (Test-Path $htmlPath)) {
-            Write-Host "❌ index.html not found in script directory!" -ForegroundColor Red
-            return
-        }
-
         $port = Get-FreePort
+        $html = Invoke-WebRequest "https://raw.githubusercontent.com/Priyanshu8494/pc-setup-dashboard/main/index.html" -UseBasicParsing
         $listener = New-Object System.Net.HttpListener
         $listener.Prefixes.Add("http://localhost:$port/")
         $listener.Start()
@@ -46,25 +40,28 @@ function Start-WebListener {
 
         while ($listener.IsListening) {
             $context = $listener.GetContext()
-            $request = $context.Request
             $response = $context.Response
+            $request = $context.Request
 
-            $urlPath = $request.Url.AbsolutePath.TrimStart('/')
-            if ($urlPath -eq "" -or $urlPath -eq "index.html") {
-                $html = Get-Content $htmlPath -Raw
-                $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
+            if ($request.Url.AbsolutePath -eq "/" -or $request.Url.AbsolutePath -eq "/index.html") {
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($html.Content)
                 $response.ContentType = "text/html"
                 $response.ContentLength64 = $buffer.Length
                 $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            } elseif ($urlPath -like "install*") {
+            } elseif ($request.Url.AbsolutePath -like "/install") {
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
-                    Start-Process "winget" -ArgumentList "install --id=$pkg --silent --accept-source-agreements --accept-package-agreements" -WindowStyle Hidden
-                    $msg = "Started installation of $pkg"
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
-                    $response.ContentType = "text/plain"
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
+                    Start-Process "winget" -ArgumentList "install --id $pkg -e --silent" -WindowStyle Hidden
+                    $response.StatusCode = 200
+                    $message = "✅ Installing $pkg"
+                } else {
+                    $response.StatusCode = 400
+                    $message = "❌ No package specified"
                 }
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($message)
+                $response.ContentType = "text/plain"
+                $response.ContentLength64 = $buffer.Length
+                $response.OutputStream.Write($buffer, 0, $buffer.Length)
             } else {
                 $response.StatusCode = 404
             }
@@ -76,7 +73,7 @@ function Start-WebListener {
     }
 }
 
-# Run the script
+# Main
 Ensure-Winget
 Ensure-Chocolatey
 Start-WebListener
