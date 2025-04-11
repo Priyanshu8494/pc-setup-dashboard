@@ -262,12 +262,13 @@
     }
 
     function runScript(software) {
-      fetch(`scripts/${software}.ps1`)
-        .then(response => response.text())
-        .then(script => {
-          alert(`This would run: ${software}.ps1\n\n(Script Preview)\n${script.substring(0, 200)}...`);
-        })
-        .catch(error => alert('Failed to load script: ' + error));
+      const link = document.createElement('a');
+      link.href = `scripts/${software}.ps1`;
+      link.download = `${software}.ps1`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      alert(`Downloaded ${software}.ps1. Please run it using PowerShell as administrator.`);
     }
 
     function toggleTheme() {
