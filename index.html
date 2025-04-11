@@ -3,264 +3,275 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PC Setup Toolkit</title>
+  <title>Elevate PC</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
-
-    :root {
-      --bg1: #0f0c29;
-      --bg2: #302b63;
-      --bg3: #24243e;
-      --card: rgba(255, 255, 255, 0.05);
-      --card-hover: rgba(255, 255, 255, 0.1);
-      --text: #e4e4e4;
-      --accent: #00fff7;
-      --header: rgba(0, 0, 0, 0.75);
-    }
-
-    [data-theme="light"] {
-      --bg1: #f2f2f2;
-      --bg2: #e6e6e6;
-      --bg3: #cccccc;
-      --card: rgba(0, 0, 0, 0.05);
-      --card-hover: rgba(0, 0, 0, 0.1);
-      --text: #1a1a1a;
-      --accent: #0077ff;
-      --header: rgba(255, 255, 255, 0.85);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Orbitron', sans-serif;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     body {
-      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
-      background-size: 600% 600%;
-      animation: gradientMove 20s ease infinite;
-      color: var(--text);
-      min-height: 100vh;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #ffffff;
+      color: #000000;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    body.dark-mode {
+      background: #1c1c2e;
+      color: #f3e8ff;
+    }
+
+    .container {
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    @keyframes gradientMove {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent);
-      background: var(--header);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-      animation: fadeInDown 1.2s ease;
+      justify-content: center;
+      padding: 4rem 1rem;
+      min-height: 100vh;
     }
 
-    header .name {
-      font-size: 0.8rem;
-      font-weight: 400;
-      opacity: 0.8;
+    .hero-text {
+      text-align: left;
+      max-width: 600px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-text h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .hero-text p {
+      font-size: 1rem;
+      color: #667;
+      margin-bottom: 2rem;
+    }
+
+    .hero-text .cta-btn {
+      background-color: #4f83f1;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .hero-text .cta-btn:hover {
+      background-color: #356de0;
+    }
+
+    .hero-img {
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-img img {
+      width: 90%;
+      max-width: 600px;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
     }
 
     .theme-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .theme-toggle input[type="checkbox"] {
+      width: 50px;
+      height: 24px;
+      appearance: none;
+      background: #ccc;
+      border-radius: 24px;
+      position: relative;
       cursor: pointer;
-      padding: 0.3rem 0.6rem;
-      border: 1px solid var(--accent);
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
+      transition: background 0.3s;
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .theme-toggle input[type="checkbox"]:checked {
+      background: #a259ff;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: transform 0.4s ease;
-    }
-
-    .logo:hover {
-      transform: rotate(360deg) scale(1.1);
-    }
-
-    .logo img {
-      height: 30px;
-    }
-
-    section {
-      padding: 1rem 2rem 0.5rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    main {
-      flex: 1;
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.2rem;
-    }
-
-    .card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      background: var(--card);
-      border-radius: 1.2rem;
-      padding: 1rem;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0,255,255,0.08);
-      transition: all 0.4s ease;
-    }
-
-    .card:hover {
-      background: var(--card-hover);
-      box-shadow: 0 0 30px rgba(0,255,255,0.2);
-      transform: translateY(-5px);
-    }
-
-    .card img {
-      width: 55px;
-      height: 55px;
-      margin-bottom: 1rem;
-      border-radius: 12px;
-    }
-
-    .card h2 {
-      font-size: 1rem;
-      margin: 0.3rem 0;
-    }
-
-    .card p {
-      font-size: 0.8rem;
-      margin-bottom: 1rem;
-      opacity: 0.75;
-    }
-
-    button {
-      padding: 0.4rem 0.8rem;
-      background: var(--accent);
-      color: #000;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
+    .theme-toggle input[type="checkbox"]::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
       background: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
     }
 
-    footer {
+    .theme-toggle input[type="checkbox"]:checked::before {
+      transform: translateX(26px);
+    }
+
+    .branding {
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
       text-align: center;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #ccc;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(5px);
+    }
+
+    .branding h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .branding p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 6rem 4rem;
+      }
+      .hero-text {
+        margin-right: 2rem;
+      }
+    }
+
+    .software-list {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 300px;
+      height: 100vh;
+      background: #f7f9ff;
+      box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+      padding: 2rem;
+      transition: left 0.6s ease, transform 0.6s ease;
+      transform: perspective(800px) rotateY(40deg);
+      z-index: 999;
+    }
+
+    body.dark-mode .software-list {
+      background: #2e1b47;
+    }
+
+    .software-list.active {
+      left: 0;
+      transform: perspective(800px) rotateY(0);
+    }
+
+    .software-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .software-list-header h2 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #333;
+    }
+
+    body.dark-mode .close-btn {
+      color: #f3e8ff;
+    }
+
+    .software-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .software-list li {
+      background: #fff;
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .software-list li:hover {
+      transform: translateX(5px);
+    }
+
+    body.dark-mode .software-list li {
+      background: #3b2c58;
+      color: #f3e8ff;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Logo">
-      <span>🚀 PC Setup Toolkit</span>
-    </div>
-    <div class="theme-toggle" onclick="toggleTheme()">🌓 Theme</div>
-    <div class="name">by Priyanshu</div>
-  </header>
+  <div class="theme-toggle">
+    <input type="checkbox" id="darkModeToggle" onclick="toggleTheme()">
+  </div>
 
-  <section>🧰 Essential Tools</section>
-  <main>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/888/888870.png" alt="WinRAR">
-      <h2>WinRAR</h2>
-      <p>File archiver utility</p>
-      <button onclick="install('RARLab.WinRAR')">Install</button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Chrome">
-      <h2>Google Chrome</h2>
-      <p>Fast web browser</p>
-      <button onclick="install('Google.Chrome')">Install</button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/5968/5968706.png" alt="Firefox">
-      <h2>Mozilla Firefox</h2>
-      <p>Open-source browser</p>
-      <button onclick="install('Mozilla.Firefox')">Install</button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Reader">
-      <h2>Adobe Reader</h2>
-      <p>Read PDF documents</p>
-      <button onclick="install('Adobe.Acrobat.Reader.64-bit')">Install</button>
-    </div>
-  </main>
+  <div class="branding">
+    <h1>Elevate PC</h1>
+    <p>by Priyanshu</p>
+  </div>
 
-  <section>💻 Development Tools</section>
-  <main>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/906/906324.png" alt="VS Code">
-      <h2>Visual Studio Code</h2>
-      <p>Powerful code editor</p>
-      <button onclick="install('Microsoft.VisualStudioCode')">Install</button>
+  <div class="container">
+    <div class="hero-text">
+      <h1>Welcome to the PC Setup Toolkit</h1>
+      <p>Unlock the Power of Your PC</p>
+      <button class="cta-btn" onclick="showList()">Get Started Now</button>
     </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111288.png" alt="Git">
-      <h2>Git</h2>
-      <p>Version control system</p>
-      <button onclick="install('Git.Git')">Install</button>
+    <div class="hero-img">
+      <img src="https://cdn.pixabay.com/photo/2015/01/21/14/14/apple-606761_1280.jpg" alt="Toolkit Image">
     </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/919/919825.png" alt="Node.js">
-      <h2>Node.js</h2>
-      <p>JavaScript runtime</p>
-      <button onclick="install('OpenJS.NodeJS')">Install</button>
-    </div>
-  </main>
+  </div>
 
-  <footer>
-    Made with ⚡ by Priyanshu — <a href="https://www.linkedin.com/in/priyanshusuryavanshi" target="_blank">LinkedIn</a> • <a href="https://github.com/Priyanshu8494" target="_blank">GitHub</a>
-  </footer>
+  <div class="software-list" id="softwareList">
+    <div class="software-list-header">
+      <h2>Essential Software</h2>
+      <button class="close-btn" onclick="hideList()">&times;</button>
+    </div>
+    <ul>
+      <li onclick="runScript('winrar')">WinRAR</li>
+      <li onclick="runScript('chrome')">Google Chrome</li>
+      <li onclick="runScript('firefox')">Mozilla Firefox</li>
+      <li onclick="runScript('vlc')">VLC Media Player</li>
+      <li onclick="runScript('anydesk')">AnyDesk</li>
+      <li onclick="runScript('ultraviewer')">UltraViewer</li>
+      <li onclick="runScript('office')">MS Office</li>
+      <li onclick="runScript('activation')">System Activation Toolkit</li>
+    </ul>
+  </div>
 
   <script>
-    function install(pkgId) {
-      fetch(`/install?pkg=${encodeURIComponent(pkgId)}`)
-        .then(response => {
-          if (response.ok) {
-            alert(`✅ ${pkgId} installation started!`);
-          } else {
-            alert(`❌ Failed to install ${pkgId}`);
-          }
+    function showList() {
+      document.getElementById('softwareList').classList.add('active');
+    }
+
+    function hideList() {
+      document.getElementById('softwareList').classList.remove('active');
+    }
+
+    function runScript(software) {
+      fetch(`scripts/${software}.ps1`)
+        .then(response => response.text())
+        .then(script => {
+          alert(`This would run: ${software}.ps1\n\n(Script Preview)\n${script.substring(0, 200)}...`);
         })
-        .catch(() => alert('❌ Unable to reach the local listener.'));
+        .catch(error => alert('Failed to load script: ' + error));
     }
 
     function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
-    }
-
-    if (!document.documentElement.getAttribute('data-theme')) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.classList.toggle('dark-mode');
     }
   </script>
 </body>
