@@ -241,13 +241,13 @@
       <button class="close-btn" onclick="hideList()">&times;</button>
     </div>
     <ul>
-      <li onclick="runScript('winrar')">WinRAR</li>
-      <li onclick="runScript('chrome')">Google Chrome</li>
-      <li onclick="runScript('firefox')">Mozilla Firefox</li>
-      <li onclick="runScript('vlc')">VLC Media Player</li>
-      <li onclick="runScript('anydesk')">AnyDesk</li>
-      <li onclick="runScript('ultraviewer')">UltraViewer</li>
-      <li onclick="runScript('office')">MS Office</li>
+      <li onclick="runScript('RARLab.WinRAR')">WinRAR</li>
+      <li onclick="runScript('Google.Chrome')">Google Chrome</li>
+      <li onclick="runScript('Mozilla.Firefox')">Mozilla Firefox</li>
+      <li onclick="runScript('VideoLAN.VLC')">VLC Media Player</li>
+      <li onclick="runScript('AnyDeskSoftwareGmbH.AnyDesk')">AnyDesk</li>
+      <li onclick="runScript('UltraViewer')">UltraViewer</li>
+      <li onclick="runScript('Microsoft.Office')">MS Office</li>
       <li onclick="runScript('activation')">System Activation Toolkit</li>
     </ul>
   </div>
@@ -262,13 +262,18 @@
     }
 
     function runScript(software) {
-      const link = document.createElement('a');
-      link.href = `scripts/${software}.ps1`;
-      link.download = `${software}.ps1`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      alert(`Downloaded ${software}.ps1. Please run it using PowerShell as administrator.`);
+      fetch(`http://localhost:3422/install?pkg=${encodeURIComponent(software)}`)
+        .then(response => {
+          if (response.ok) {
+            alert(`Installing ${software}...`);
+          } else {
+            alert(`Failed to install ${software}.`);
+          }
+        })
+        .catch(error => {
+          alert("Make sure your PowerShell listener is running!\nRun setup.ps1 first.");
+          console.error(error);
+        });
     }
 
     function toggleTheme() {
