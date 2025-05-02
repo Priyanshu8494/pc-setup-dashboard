@@ -2,283 +2,550 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elevate PC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Priyanshu's PC Setup Toolkit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    :root {
+      /* Dark Mode (Default) */
+      --bg: #121212;
+      --card: #1e1e1e;
+      --card-hover: #282828;
+      --accent: #ff4d4d;
+      --accent-dark: #e04545;
+      --text: #e0e0e0;
+      --text-light: #a0a0a0;
+      --secondary: #bb86fc;
+      --shadow: 0 10px 20px rgba(0,0,0,0.3);
+      --border: rgba(255,255,255,0.05);
+    }
+
+    [data-theme="light"] {
+      /* Light Mode */
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --card-hover: #f1f1f1;
+      --accent: #ff4d4d;
+      --accent-dark: #e04545;
+      --text: #343a40;
+      --text-light: #6c757d;
+      --secondary: #9c27b0;
+      --shadow: 0 10px 20px rgba(0,0,0,0.1);
+      --border: rgba(0,0,0,0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: #ffffff;
-      color: #000000;
-      overflow-x: hidden;
-      transition: background 0.4s, color 0.4s;
-    }
-
-    body.dark-mode {
-      background: #1c1c2e;
-      color: #f3e8ff;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 1rem;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      padding: 2rem 1rem;
+      text-align: center;
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .hero-text {
-      text-align: left;
-      max-width: 600px;
-      margin-bottom: 2rem;
-    }
-
-    .hero-text h1 {
-      font-size: 3rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-
-    .hero-text p {
-      font-size: 1rem;
-      color: #667;
-      margin-bottom: 2rem;
-    }
-
-    .hero-text .cta-btn {
-      background-color: #4f83f1;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .hero-text .cta-btn:hover {
-      background-color: #356de0;
-    }
-
-    .hero-img {
-      max-width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .hero-img img {
-      width: 90%;
-      max-width: 600px;
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-    }
-
-    .theme-toggle input[type="checkbox"] {
-      width: 50px;
-      height: 24px;
-      appearance: none;
-      background: #ccc;
-      border-radius: 24px;
+    header {
+      max-width: 800px;
+      margin: 0 auto 3rem;
       position: relative;
-      cursor: pointer;
-      transition: background 0.3s;
     }
 
-    .theme-toggle input[type="checkbox"]:checked {
-      background: #a259ff;
-    }
-
-    .theme-toggle input[type="checkbox"]::before {
+    header::after {
       content: '';
       position: absolute;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: white;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.3s;
-    }
-
-    .theme-toggle input[type="checkbox"]:checked::before {
-      transform: translateX(26px);
-    }
-
-    .branding {
-      position: absolute;
-      top: 1rem;
+      bottom: -1.5rem;
       left: 50%;
       transform: translateX(-50%);
-      text-align: center;
+      width: 100px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 3px;
     }
 
-    .branding h1 {
+    header h1 {
+      color: var(--accent);
       font-size: 2.5rem;
-      margin: 0;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 10px rgba(255, 77, 77, 0.3);
     }
 
-    .branding p {
-      font-size: 0.9rem;
-      margin: 0;
+    header p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      font-weight: 300;
     }
 
-    @media (min-width: 768px) {
-      .container {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 6rem 4rem;
-      }
-      .hero-text {
-        margin-right: 2rem;
-      }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      perspective: 1000px;
     }
 
-    .software-list {
-      position: fixed;
+    .card {
+      background-color: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
       top: 0;
-      left: -100%;
-      width: 300px;
-      height: 100vh;
-      background: #f7f9ff;
-      box-shadow: 5px 0 20px rgba(0,0,0,0.2);
-      padding: 2rem;
-      transition: left 0.6s ease, transform 0.6s ease;
-      transform: perspective(800px) rotateY(40deg);
-      z-index: 999;
-    }
-
-    body.dark-mode .software-list {
-      background: #2e1b47;
-    }
-
-    .software-list.active {
       left: 0;
-      transform: perspective(800px) rotateY(0);
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 77, 77, 0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: all 0.3s ease;
     }
 
-    .software-list-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      background-color: var(--card-hover);
+      border-color: rgba(255, 77, 77, 0.2);
     }
 
-    .software-list-header h2 {
-      font-size: 1.5rem;
-      margin: 0;
+    .card:hover::before {
+      opacity: 1;
     }
 
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #333;
+    .card:active {
+      transform: translateY(-4px);
     }
 
-    body.dark-mode .close-btn {
-      color: #f3e8ff;
+    .card img {
+      height: 60px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
 
-    .software-list ul {
-      list-style: none;
-      padding: 0;
+    .card:hover img {
+      transform: scale(1.1);
     }
 
-    .software-list li {
-      background: #fff;
-      padding: 0.75rem 1rem;
-      margin: 0.5rem 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
+    .card span {
+      display: block;
+      font-size: 1.1rem;
       font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .card small {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 300;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.2);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+
+    .category-filter {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .category-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      background: rgba(255, 77, 77, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(255, 77, 77, 0.2);
       cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
     }
 
-    .software-list li:hover {
-      transform: translateX(5px);
+    .category-btn:hover, .category-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
     }
 
-    body.dark-mode .software-list li {
-      background: #3b2c58;
-      color: #f3e8ff;
+    .footer {
+      margin-top: 3rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: var(--accent-dark);
+      text-decoration: underline;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    /* Animation classes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      
+      .card img {
+        height: 50px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        top: 15px;
+        right: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="theme-toggle">
-    <input type="checkbox" id="darkModeToggle" onclick="toggleTheme()">
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
   </div>
 
-  <div class="branding">
-    <h1>Elevate PC</h1>
-    <p>by Priyanshu</p>
+  <header class="animate-fade">
+    <h1><i class="fas fa-tools" style="margin-right: 10px;"></i> Priyanshu's PC Setup Toolkit</h1>
+    <p>One-click installers for essential applications</p>
+  </header>
+
+  <div class="search-container animate-fade delay-1">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search applications...">
+    <i class="fas fa-search search-icon"></i>
   </div>
 
-  <div class="container">
-    <div class="hero-text">
-      <h1>Welcome to the PC Setup Toolkit</h1>
-      <p>Unlock the Power of Your PC</p>
-      <button class="cta-btn" onclick="showList()">Get Started Now</button>
-    </div>
-    <div class="hero-img">
-      <img src="https://cdn.pixabay.com/photo/2015/01/21/14/14/apple-606761_1280.jpg" alt="Toolkit Image">
-    </div>
+  <div class="category-filter animate-fade delay-2">
+    <button class="category-btn active" data-category="all">All</button>
+    <button class="category-btn" data-category="browser">Browsers</button>
+    <button class="category-btn" data-category="development">Development</button>
+    <button class="category-btn" data-category="utility">Utilities</button>
+    <button class="category-btn" data-category="communication">Communication</button>
   </div>
 
-  <div class="software-list" id="softwareList">
-    <div class="software-list-header">
-      <h2>Essential Software</h2>
-      <button class="close-btn" onclick="hideList()">&times;</button>
-    </div>
-    <ul>
-      <li onclick="runScript('RARLab.WinRAR')">WinRAR</li>
-      <li onclick="runScript('Google.Chrome')">Google Chrome</li>
-      <li onclick="runScript('Mozilla.Firefox')">Mozilla Firefox</li>
-      <li onclick="runScript('VideoLAN.VLC')">VLC Media Player</li>
-      <li onclick="runScript('AnyDeskSoftwareGmbH.AnyDesk')">AnyDesk</li>
-      <li onclick="runScript('UltraViewer')">UltraViewer</li>
-      <li onclick="runScript('Microsoft.Office')">MS Office</li>
-      <li onclick="runScript('activation')">System Activation Toolkit</li>
-    </ul>
+  <div class="grid" id="appGrid">
+    <!-- Browsers -->
+    <a href="https://dl.google.com/chrome/install/latest/chrome_installer.exe" download class="animate-fade delay-1" data-category="browser">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/chrome.png" alt="Chrome"/>
+        <span>Google Chrome</span>
+        <small>Secure web browser</small>
+      </div>
+    </a>
+
+    <a href="https://updates.bravesoftware.com/download/BraveBrowserSetup.exe" download class="animate-fade delay-2" data-category="browser">
+      <div class="card">
+        <img src="https://img.icons8.com/ios-filled/96/brave-web-browser.png" alt="Brave"/>
+        <span>Brave Browser</span>
+        <small>Privacy-first browser</small>
+      </div>
+    </a>
+
+    <!-- Development -->
+    <a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" download class="animate-fade delay-3" data-category="development">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/visual-studio-code-2019.png" alt="VS Code"/>
+        <span>VS Code</span>
+        <small>Code editor by Microsoft</small>
+      </div>
+    </a>
+
+    <a href="https://github.com/notepad-plus-plus/notepad-plus-plus/releases/latest/download/npp.8.6.4.Installer.x64.exe" download class="animate-fade delay-4" data-category="development">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/notepad++.png" alt="Notepad++"/>
+        <span>Notepad++</span>
+        <small>Text/code editor</small>
+      </div>
+    </a>
+
+    <a href="https://github.com/git-for-windows/git/releases/latest/download/Git-2.44.0-64-bit.exe" download class="animate-fade delay-1" data-category="development">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/git.png" alt="Git"/>
+        <span>Git</span>
+        <small>Version control system</small>
+      </div>
+    </a>
+
+    <a href="https://nodejs.org/dist/v20.12.2/node-v20.12.2-x64.msi" download class="animate-fade delay-2" data-category="development">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/nodejs.png" alt="Node.js"/>
+        <span>Node.js LTS</span>
+        <small>JavaScript runtime</small>
+      </div>
+    </a>
+
+    <a href="https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe" download class="animate-fade delay-3" data-category="development">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/python--v1.png" alt="Python"/>
+        <span>Python 3</span>
+        <small>Programming language</small>
+      </div>
+    </a>
+
+    <!-- Utilities -->
+    <a href="https://www.7-zip.org/a/7z2301-x64.exe" download class="animate-fade delay-4" data-category="utility">
+      <div class="card">
+        <img src="https://img.icons8.com/fluency/96/7z.png" alt="7-Zip"/>
+        <span>7-Zip</span>
+        <small>File archiver & extractor</small>
+      </div>
+    </a>
+
+    <a href="https://www.videolan.org/vlc/download-windows.html" target="_blank" class="animate-fade delay-1" data-category="utility">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/vlc-media-player.png" alt="VLC"/>
+        <span>VLC Media Player</span>
+        <small>Open-source media player</small>
+      </div>
+    </a>
+
+    <a href="https://get.adobe.com/reader/download/?installer=Reader_DC_2023.008.20555_English_for_Windows&standalone=1" target="_blank" class="animate-fade delay-2" data-category="utility">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/adobe-acrobat-reader.png" alt="Adobe Reader"/>
+        <span>Acrobat Reader</span>
+        <small>View PDF documents</small>
+      </div>
+    </a>
+
+    <!-- Communication -->
+    <a href="https://zoom.us/client/latest/ZoomInstaller.exe" download class="animate-fade delay-3" data-category="communication">
+      <div class="card">
+        <img src="https://img.icons8.com/fluency/96/zoom.png" alt="Zoom"/>
+        <span>Zoom</span>
+        <small>Meetings & video calls</small>
+      </div>
+    </a>
+
+    <a href="https://discord.com/api/download?platform=win" download class="animate-fade delay-4" data-category="communication">
+      <div class="card">
+        <img src="https://img.icons8.com/color/96/discord--v2.png" alt="Discord"/>
+        <span>Discord</span>
+        <small>Community & voice chat</small>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer animate-fade delay-3">
+    <p>Curated with <i class="fas fa-heart" style="color: var(--accent);"></i> by Priyanshu | <a href="https://github.com/yourusername" target="_blank">GitHub</a></p>
   </div>
 
   <script>
-    function showList() {
-      document.getElementById('softwareList').classList.add('active');
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    let isDarkMode = true;
+
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'light') {
+      setLightMode();
     }
 
-    function hideList() {
-      document.getElementById('softwareList').classList.remove('active');
+    themeToggle.addEventListener('click', () => {
+      if (isDarkMode) {
+        setLightMode();
+      } else {
+        setDarkMode();
+      }
+    });
+
+    function setLightMode() {
+      body.setAttribute('data-theme', 'light');
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      isDarkMode = false;
+      localStorage.setItem('theme', 'light');
     }
 
-    function runScript(software) {
-      fetch(`http://localhost:3422/install?pkg=${encodeURIComponent(software)}`)
-        .then(response => {
-          if (response.ok) {
-            alert(`Installing ${software}...`);
-          } else {
-            alert(`Failed to install ${software}.`);
-          }
-        })
-        .catch(error => {
-          alert("Make sure your PowerShell listener is running!\nRun setup.ps1 first.");
-          console.error(error);
-        });
+    function setDarkMode() {
+      body.removeAttribute('data-theme');
+      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      isDarkMode = true;
+      localStorage.setItem('theme', 'dark');
     }
 
-    function toggleTheme() {
-      document.body.classList.toggle('dark-mode');
+    // Search Functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      filterApps();
+    });
+
+    // Category Filter Functionality
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    let currentCategory = 'all';
+    
+    categoryBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Update active button
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        currentCategory = this.dataset.category;
+        filterApps();
+      });
+    });
+
+    // Combined Filter Function
+    function filterApps() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const apps = document.querySelectorAll('#appGrid a');
+      
+      apps.forEach(app => {
+        const appCategory = app.dataset.category;
+        const title = app.querySelector('span').textContent.toLowerCase();
+        const desc = app.querySelector('small').textContent.toLowerCase();
+        
+        // Check category filter
+        const categoryMatch = currentCategory === 'all' || appCategory === currentCategory;
+        
+        // Check search term
+        const searchMatch = searchTerm === '' || 
+                          title.includes(searchTerm) || 
+                          desc.includes(searchTerm);
+        
+        // Show/hide based on both filters
+        if (categoryMatch && searchMatch) {
+          app.style.display = 'block';
+        } else {
+          app.style.display = 'none';
+        }
+      });
     }
+
+    // Enhanced card hover effect
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const angleX = (y - centerY) / 20;
+        const angleY = (centerX - x) / 20;
+        
+        card.style.transform = `translateY(-8px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(-8px) rotateX(0) rotateY(0) scale(1.02)';
+      });
+    });
   </script>
 </body>
 </html>
