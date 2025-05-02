@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PrixTools</title>
+  <title>PrixTools - PC Setup Toolkit</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -54,28 +54,37 @@
 
     header {
       max-width: 800px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 2rem;
       position: relative;
     }
 
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: -1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 3px;
-      background: var(--accent);
-      border-radius: 3px;
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 10px;
     }
 
-    header h1 {
-      color: var(--accent);
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+    }
+
+    .logo-text {
       font-size: 2.5rem;
-      margin-bottom: 0.5rem;
       font-weight: 700;
       letter-spacing: -0.5px;
+      color: var(--accent);
       text-shadow: 0 2px 10px rgba(255, 77, 77, 0.3);
     }
 
@@ -83,6 +92,8 @@
       color: var(--text-light);
       font-size: 1.1rem;
       font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .grid {
@@ -232,16 +243,10 @@
 
     .footer a {
       color: var(--accent);
+      font-weight: 500;
       text-decoration: none;
-      transition: all 0.3s ease;
     }
 
-    .footer a:hover {
-      color: var(--accent-dark);
-      text-decoration: underline;
-    }
-
-    /* Theme Toggle */
     .theme-toggle {
       position: fixed;
       top: 20px;
@@ -269,7 +274,6 @@
       color: var(--accent);
     }
 
-    /* Animation classes */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -284,7 +288,6 @@
     .delay-3 { animation-delay: 0.3s; }
     .delay-4 { animation-delay: 0.4s; }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       header h1 {
         font-size: 2rem;
@@ -310,6 +313,10 @@
         top: 15px;
         right: 15px;
       }
+      
+      .logo-text {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
@@ -320,8 +327,11 @@
   </div>
 
   <header class="animate-fade">
-    <h1><i class="fas fa-tools" style="margin-right: 10px;"></i> Priyanshu's PC Setup Toolkit</h1>
-    <p>One-click installers for essential applications</p>
+    <div class="logo">
+      <div class="logo-icon">P</div>
+      <div class="logo-text">PrixTools</div>
+    </div>
+    <p>Curated one-click installers for developers and power users</p>
   </header>
 
   <div class="search-container animate-fade delay-1">
@@ -440,7 +450,8 @@
   </div>
 
   <div class="footer animate-fade delay-3">
-    <p>Curated with <i class="fas fa-heart" style="color: var(--accent);"></i> by Priyanshu | <a href="https://github.com/yourusername" target="_blank">GitHub</a></p>
+    <p>Curated with <i class="fas fa-heart" style="color: var(--accent);"></i> by Priyanshu</p>
+    <p>Part of the <a href="#">PrixTools</a> collection</p>
   </div>
 
   <script>
@@ -449,7 +460,6 @@
     const body = document.body;
     let isDarkMode = true;
 
-    // Check for saved theme preference
     if (localStorage.getItem('theme') === 'light') {
       setLightMode();
     }
@@ -476,29 +486,22 @@
       localStorage.setItem('theme', 'dark');
     }
 
-    // Search Functionality
+    // Search and Filter Functionality
     const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      filterApps();
-    });
-
-    // Category Filter Functionality
     const categoryBtns = document.querySelectorAll('.category-btn');
     let currentCategory = 'all';
     
+    searchInput.addEventListener('input', filterApps);
+    
     categoryBtns.forEach(btn => {
       btn.addEventListener('click', function() {
-        // Update active button
         categoryBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        
         currentCategory = this.dataset.category;
         filterApps();
       });
     });
 
-    // Combined Filter Function
     function filterApps() {
       const searchTerm = searchInput.value.toLowerCase();
       const apps = document.querySelectorAll('#appGrid a');
@@ -508,37 +511,24 @@
         const title = app.querySelector('span').textContent.toLowerCase();
         const desc = app.querySelector('small').textContent.toLowerCase();
         
-        // Check category filter
         const categoryMatch = currentCategory === 'all' || appCategory === currentCategory;
+        const searchMatch = searchTerm === '' || title.includes(searchTerm) || desc.includes(searchTerm);
         
-        // Check search term
-        const searchMatch = searchTerm === '' || 
-                          title.includes(searchTerm) || 
-                          desc.includes(searchTerm);
-        
-        // Show/hide based on both filters
-        if (categoryMatch && searchMatch) {
-          app.style.display = 'block';
-        } else {
-          app.style.display = 'none';
-        }
+        app.style.display = (categoryMatch && searchMatch) ? 'block' : 'none';
       });
     }
 
-    // Enhanced card hover effect
+    // Card hover effects
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        
         const angleX = (y - centerY) / 20;
         const angleY = (centerX - x) / 20;
-        
         card.style.transform = `translateY(-8px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
       });
       
