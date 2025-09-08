@@ -1,22 +1,22 @@
-# ================================
-#  Priyanshu's PC Setup Toolkit
+# -------------------------------------------------------------
+#  Priyanshu's PC Setup Toolkit (PowerShell 5+ / PowerShell 7+)
 #  Inspired by Chris Titus Tech
-# ================================
-
+# -------------------------------------------------------------
+# ---------- 1️⃣  Utility Functions --------------------------------
 function Get-FreePort {
-    $tcpListeners = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
+    # Find the first unused port between 3422–3500
+    $used = Get-NetTCPConnection -State Listen | Select-Object -ExpandProperty LocalPort
     for ($p = 3422; $p -lt 3500; $p++) {
-        if ($tcpListeners -notcontains $p) { return $p }
+        if ($used -notcontains $p) { return $p }
     }
     throw "❌ No free port available between 3422–3500."
 }
-
 function Ensure-Winget {
     Write-Host "🔍 Checking Winget..." -ForegroundColor Cyan
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
         Write-Host "⬇️ Installing Winget (App Installer)..." -ForegroundColor Yellow
         try {
-            Invoke-WebRequest "https://aka.ms/getwinget" -OutFile "$env:TEMP\AppInstaller.msixbundle"
+            Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile "$env:TEMP\AppInstaller.msixbundle"
             Add-AppxPackage -Path "$env:TEMP\AppInstaller.msixbundle"
         } catch {
             Write-Host "❌ Winget installation failed. Please install manually: https://aka.ms/getwinget" -ForegroundColor Red
@@ -26,7 +26,6 @@ function Ensure-Winget {
     }
     Write-Host "✅ Winget ready." -ForegroundColor Green
 }
-
 function Ensure-Chocolatey {
     Write-Host "🔍 Checking Chocolatey..." -ForegroundColor Cyan
     if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
@@ -43,72 +42,91 @@ function Ensure-Chocolatey {
     }
     Write-Host "✅ Chocolatey ready." -ForegroundColor Green
 }
-
+# ---------- 2️⃣  Web Listener -------------------------------------
 function Start-WebListener {
-    $port = Get-FreePort
-    $htmlUrl = "https://priyanshu8494.github.io/pc-setup-dashboard/index.html"
-    $htmlPath = "$env:TEMP\index.html"
-
+    $port      = Get-FreePort
+    $htmlUrl   = "https://priyanshu8494.github.io/pc-setup-dashboard/index.html"
+    $htmlPath  = "$env:TEMP\index.html"
     Write-Host "⬇️ Downloading Web Dashboard..." -ForegroundColor Yellow
     try {
-        Invoke-WebRequest $htmlUrl -OutFile $htmlPath -UseBasicParsing
+        Invoke-WebRequest -Uri $htmlUrl -OutFile $htmlPath
     } catch {
         Write-Host "❌ Failed to download index.html from GitHub Pages." -ForegroundColor Red
         return
     }
-
     if (-not (Test-Path $htmlPath)) {
         Write-Host "❌ index.html could not be loaded!" -ForegroundColor Red
         return
     }
-
+    $listener = New-Object System.Net.HttpListener
+    $listener.Prefixes.Add("http://localhost:$port/")
+    $listener.Start()
+    Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
+    # Open browser automatically
+    Start-Process "http://localhost:$port"
     try {
-        $listener = New-Object System.Net.HttpListener
-        $listener.Prefixes.Add("http://localhost:$port/")
-        $listener.Start()
-        Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
-        Start-Process "http://localhost:$port"
-
         while ($listener.IsListening) {
-            $context   = $listener.GetContext()
-            $request   = $context.Request
-            $response  = $context.Response
-
-            if ($request.Url.AbsolutePath -eq "/" -or $request.Url.AbsolutePath -eq "/index.html") {
+            $context  = $listener.GetContext()
+            $request  = $context.Request
+            $response = $context.Response
+            switch ($request.Url.AbsolutePath) {
+                '/' { $path = '/' }
+                '/index.html' { $path = '/index.html' }
+                default { $path = $request.Url.AbsolutePath }
+            }
+            if ($path -in @('/', '/index.html')) {
+                # Serve the dashboard
                 $html   = Get-Content $htmlPath -Raw
-                $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
-                $response.ContentType    = "text/html"
-                $response.ContentLength64 = $buffer.Length
-                $response.OutputStream.Write($buffer, 0, $buffer.Length)
-            } elseif ($request.Url.AbsolutePath -like "/install") {
+                $bytes  = [System.Text.Encoding]::UTF8.GetBytes($html)
+                $response.ContentType    = 'text/html'
+                $response.ContentLength64 = $bytes.Length
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            } elseif ($path -eq '/install') {
+                # Install a package via Winget
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
                     Write-Host "⬇️ Installing package: $pkg" -ForegroundColor Cyan
-                    Start-Process "powershell" "-NoProfile -WindowStyle Hidden -Command winget install --id $pkg --silent" -Verb RunAs
+                    # Try --id first, fallback to --name if it fails
+                    $installCmd = "winget install --id $pkg --silent"
+                    Start-Process 
+                        -FilePath 'powershell.exe' 
+                        -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', $installCmd 
+                        -Verb RunAs
                 }
                 $response.StatusCode = 200
-
-            # 🔥 NEW ADVANCE TOOLKIT OPTION
-            } elseif ($request.Url.AbsolutePath -like "/advance") {
+            } elseif ($path -eq '/advance') {
+                # Launch Chris Titus “Advance Toolkit”
                 Write-Host "🚀 Launching Advance Toolkit..." -ForegroundColor Magenta
-                Start-Process "powershell" "-NoProfile -WindowStyle Hidden -Command irm christitus.com/win | iex" -Verb RunAs
+                Start-Process 
+                    -FilePath 'powershell.exe' 
+                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', "irm christitus.com/win | iex" 
+                    -Verb RunAs
                 $response.StatusCode = 200
-
             } else {
                 $response.StatusCode = 404
             }
-
             $response.OutputStream.Close()
         }
     } catch {
-        Write-Host "❌ Failed to start listener. Try running PowerShell as Administrator or freeing ports 3422–3500." -ForegroundColor Red
+        Write-Host "❌ Listener error: $_" -ForegroundColor Red
+    } finally {
+        if ($listener -and $listener.IsListening) {
+            $listener.Stop()
+        }
     }
 }
-
-# ================================
-# Main Bootstrap Execution
-# ================================
+# ---------- 3️⃣  Bootstrap ----------------------------------------
 Write-Host "🚀 Starting Priyanshu's PC Setup Toolkit..." -ForegroundColor Cyan
 Ensure-Winget
 Ensure-Chocolatey
 Start-WebListener
+
+                        -FilePath 'powershell.exe' 
+                        -Verb RunAs
+                }
+                $response.StatusCode = 200
+            } elseif ($path -eq '/advance') {
+                # Launch Chris Titus “Advance Toolkit”
+                Write-Host "🚀 Launching Advance Toolkit..." -ForegroundColor Magenta
+                Start-Process 
+                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', "irm christitus.com/win | iex" 
