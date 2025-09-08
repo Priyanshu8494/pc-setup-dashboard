@@ -62,7 +62,7 @@ function Start-WebListener {
     $listener.Prefixes.Add("http://localhost:$port/")
     $listener.Start()
     Write-Host "✅ Listener started at http://localhost:$port" -ForegroundColor Green
-    # Open browser automatically
+    # Open the dashboard in the default browser
     Start-Process "http://localhost:$port"
     try {
         while ($listener.IsListening) {
@@ -74,35 +74,36 @@ function Start-WebListener {
                 '/index.html' { $path = '/index.html' }
                 default { $path = $request.Url.AbsolutePath }
             }
+            # ---- Serve the dashboard --------------------------------
             if ($path -in @('/', '/index.html')) {
-                # Serve the dashboard
                 $html   = Get-Content $htmlPath -Raw
                 $bytes  = [System.Text.Encoding]::UTF8.GetBytes($html)
                 $response.ContentType    = 'text/html'
                 $response.ContentLength64 = $bytes.Length
                 $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            } elseif ($path -eq '/install') {
-                # Install a package via Winget
+            }
+            # ---- Install via Winget --------------------------------
+            elseif ($path -eq '/install') {
                 $pkg = $request.QueryString["pkg"]
                 if ($pkg) {
                     Write-Host "⬇️ Installing package: $pkg" -ForegroundColor Cyan
-                    # Try --id first, fallback to --name if it fails
                     $installCmd = "winget install --id $pkg --silent"
-                    Start-Process 
-                        -FilePath 'powershell.exe' 
-                        -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', $installCmd 
+                    Start-Process -FilePath 'powershell.exe' 
+                        -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command',$installCmd 
                         -Verb RunAs
                 }
                 $response.StatusCode = 200
-            } elseif ($path -eq '/advance') {
-                # Launch Chris Titus “Advance Toolkit”
+            }
+            # ---- Run Advance Toolkit --------------------------------
+            elseif ($path -eq '/advance') {
                 Write-Host "🚀 Launching Advance Toolkit..." -ForegroundColor Magenta
-                Start-Process 
-                    -FilePath 'powershell.exe' 
-                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', "irm christitus.com/win | iex" 
+                Start-Process -FilePath 'powershell.exe' 
+                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command','irm christitus.com/win | iex' 
                     -Verb RunAs
                 $response.StatusCode = 200
-            } else {
+            }
+            # ---- Unknown path ----------------------------------------
+            else {
                 $response.StatusCode = 404
             }
             $response.OutputStream.Close()
@@ -110,9 +111,7 @@ function Start-WebListener {
     } catch {
         Write-Host "❌ Listener error: $_" -ForegroundColor Red
     } finally {
-        if ($listener -and $listener.IsListening) {
-            $listener.Stop()
-        }
+        if ($listener -and $listener.IsListening) { $listener.Stop() }
     }
 }
 # ---------- 3️⃣  Bootstrap ----------------------------------------
@@ -121,12 +120,5 @@ Ensure-Winget
 Ensure-Chocolatey
 Start-WebListener
 
-                        -FilePath 'powershell.exe' 
-                        -Verb RunAs
-                }
-                $response.StatusCode = 200
-            } elseif ($path -eq '/advance') {
-                # Launch Chris Titus “Advance Toolkit”
-                Write-Host "🚀 Launching Advance Toolkit..." -ForegroundColor Magenta
-                Start-Process 
-                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command', "irm christitus.com/win | iex" 
+                        -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command',$installCmd 
+                    -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command','irm christitus.com/win | iex' 
