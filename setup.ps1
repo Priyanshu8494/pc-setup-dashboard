@@ -87,6 +87,13 @@ function Start-WebListener {
                     Start-Process "powershell" "-NoProfile -WindowStyle Hidden -Command winget install --id $pkg --silent" -Verb RunAs
                 }
                 $response.StatusCode = 200
+
+            # 🔥 NEW ADVANCE TOOLKIT OPTION
+            } elseif ($request.Url.AbsolutePath -like "/advance") {
+                Write-Host "🚀 Launching Advance Toolkit..." -ForegroundColor Magenta
+                Start-Process "powershell" "-NoProfile -WindowStyle Hidden -Command irm christitus.com/win | iex" -Verb RunAs
+                $response.StatusCode = 200
+
             } else {
                 $response.StatusCode = 404
             }
