@@ -8,337 +8,92 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Dark Mode (Default) */
-      --bg: #121212;
-      --card: #1e1e1e;
-      --card-hover: #282828;
-      --accent: #ff4d4d;
-      --accent-dark: #e04545;
-      --text: #e0e0e0;
-      --text-light: #a0a0a0;
-      --secondary: #bb86fc;
-      --shadow: 0 10px 20px rgba(0,0,0,0.3);
+      --bg: #121212; --card: #1e1e1e; --card-hover: #282828; --accent: #ff4d4d; --accent-dark: #e04545;
+      --text: #e0e0e0; --text-light: #a0a0a0; --secondary: #bb86fc; --shadow: 0 10px 20px rgba(0,0,0,0.3);
       --border: rgba(255,255,255,0.05);
     }
-
     [data-theme="light"] {
-      /* Light Mode */
-      --bg: #f8f9fa;
-      --card: #ffffff;
-      --card-hover: #f1f1f1;
-      --accent: #ff4d4d;
-      --accent-dark: #e04545;
-      --text: #343a40;
-      --text-light: #6c757d;
-      --secondary: #9c27b0;
-      --shadow: 0 10px 20px rgba(0,0,0,0.1);
-      --border: rgba(0,0,0,0.05);
+      --bg: #f8f9fa; --card: #ffffff; --card-hover: #f1f1f1; --accent: #ff4d4d;
+      --accent-dark: #e04545; --text: #343a40; --text-light: #6c757d; --secondary: #9c27b0;
+      --shadow: 0 10px 20px rgba(0,0,0,0.1); --border: rgba(0,0,0,0.05);
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem 1rem;
-      text-align: center;
-      line-height: 1.6;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    header {
-      max-width: 800px;
-      margin: 0 auto 2rem;
-      position: relative;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .logo-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--accent);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 1.5rem;
-      box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
-    }
-
-    .logo-text {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--accent);
-      text-shadow: 0 2px 10px rgba(255, 77, 77, 0.3);
-    }
-
-    header p {
-      color: var(--text-light);
-      font-size: 1.1rem;
-      font-weight: 300;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      perspective: 1000px;
-    }
-
-    .card {
-      background-color: var(--card);
-      border-radius: 16px;
-      padding: 1.5rem;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(255, 77, 77, 0.1) 0%, transparent 100%);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-      background-color: var(--card-hover);
-      border-color: rgba(255, 77, 77, 0.2);
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card:active {
-      transform: translateY(-4px);
-    }
-
-    .card img {
-      height: 60px;
-      margin-bottom: 1rem;
-      transition: all 0.3s ease;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-    }
-
-    .card:hover img {
-      transform: scale(1.1);
-    }
-
-    .card span {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-    }
-
-    .card small {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 300;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .search-container {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 0.8rem 1.5rem;
-      border-radius: 50px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.2);
-    }
-
-    .search-input::placeholder {
-      color: var(--text-light);
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 1.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-light);
-    }
-
-    .category-filter {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .category-btn {
-      padding: 0.5rem 1.2rem;
-      border-radius: 50px;
-      background: rgba(255, 77, 77, 0.1);
-      color: var(--accent);
-      border: 1px solid rgba(255, 77, 77, 0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .category-btn:hover, .category-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-
-    .footer {
-      margin-top: 3rem;
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-
-    .footer a {
-      color: var(--accent);
-      font-weight: 500;
-      text-decoration: none;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      z-index: 100;
-      transition: all 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-      transform: scale(1.1);
-    }
-
-    .theme-toggle i {
-      font-size: 1.2rem;
-      color: var(--accent);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .animate-fade {
-      animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
-    .delay-4 { animation-delay: 0.4s; }
-
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      
-      .grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-      
-      .card img {
-        height: 50px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      
-      .theme-toggle {
-        width: 40px;
-        height: 40px;
-        top: 15px;
-        right: 15px;
-      }
-      
-      .logo-text {
-        font-size: 2rem;
-      }
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);
+         min-height:100vh;padding:2rem 1rem;text-align:center;line-height:1.6;
+         transition:background-color .3s ease,color .3s ease;}
+    header{max-width:800px;margin:0 auto 2rem;position:relative;}
+    .logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
+    .logo-icon{width:48px;height:48px;background:var(--accent);border-radius:12px;
+               display:flex;align-items:center;justify-content:center;color:white;
+               font-weight:bold;font-size:1.5rem;box-shadow:0 4px 12px rgba(255,77,77,.3);}
+    .logo-text{font-size:2.5rem;font-weight:700;letter-spacing:-0.5px;color:var(--accent);
+               text-shadow:0 2px 10px rgba(255,77,77,.3);}
+    header p{color:var(--text-light);font-size:1.1rem;font-weight:300;
+             max-width:600px;margin:0 auto;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;
+          max-width:1200px;margin:0 auto;perspective:1000px;}
+    .card{background-color:var(--card);border-radius:16px;padding:1.5rem;cursor:pointer;
+          box-shadow:var(--shadow);transition:all .3s ease;position:relative;overflow:hidden;
+          border:1px solid var(--border);}
+    .card::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+                   background:linear-gradient(135deg,rgba(255,77,77,.1) 0%,transparent 100%);
+                   opacity:0;transition:all .3s ease;}
+    .card:hover{transform:translateY(-8px);box-shadow:0 15px 30px rgba(0,0,0,.2);
+                background-color:var(--card-hover);border-color:rgba(255,77,77,.2);}
+    .card:hover::before{opacity:1;}
+    .card:active{transform:translateY(-4px);}
+    .card img{height:60px;margin-bottom:1rem;transition:all .3s ease;
+              filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));}
+    .card:hover img{transform:scale(1.1);}
+    .card span{display:block;font-size:1.1rem;font-weight:500;margin-bottom:.25rem;}
+    .card small{display:block;font-size:.85rem;color:var(--text-light);font-weight:300;}
+    a{text-decoration:none;color:inherit;}
+    .search-container{max-width:600px;margin:0 auto 2rem;position:relative;}
+    .search-input{width:100%;padding:.8rem 1.5rem;border-radius:50px;border:1px solid var(--border);
+                  background:var(--card);color:var(--text);font-size:1rem;transition:all .3s ease;}
+    .search-input:focus{outline:none;border-color:var(--accent);
+                        box-shadow:0 0 0 2px rgba(255,77,77,.2);}
+    .search-input::placeholder{color:var(--text-light);}
+    .search-icon{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);
+                 color:var(--text-light);}
+    .category-filter{display:flex;justify-content:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
+    .category-btn{padding:.5rem 1.2rem;border-radius:50px;background:rgba(255,77,77,.1);
+                  color:var(--accent);border:1px solid rgba(255,77,77,.2);
+                  cursor:pointer;transition:all .3s ease;font-size:.9rem;font-weight:500;}
+    .category-btn:hover,.category-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+    .footer{margin-top:3rem;color:var(--text-light);font-size:.9rem;}
+    .footer a{color:var(--accent);font-weight:500;text-decoration:none;}
+    .theme-toggle{position:fixed;top:20px;right:20px;background:var(--card);border:1px solid var(--border);
+                  width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+                  cursor:pointer;box-shadow:var(--shadow);z-index:100;transition:all .3s ease;}
+    .theme-toggle:hover{transform:scale(1.1);}
+    .theme-toggle i{font-size:1.2rem;color:var(--accent);}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    .animate-fade{animation:fadeIn .6s ease-out forwards;}
+    .delay-1{animation-delay:.1s;} .delay-2{animation-delay:.2s;} .delay-3{animation-delay:.3s;} .delay-4{animation-delay:.4s;}
+    @media(max-width:768px){header h1{font-size:2rem;} .grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+                           .card img{height:50px;}}
+    @media(max-width:480px){.grid{grid-template-columns:1fr 1fr;}
+                            .theme-toggle{width:40px;height:40px;top:15px;right:15px;}
+                            .logo-text{font-size:2rem;}}
   </style>
 </head>
 <body>
-  <!-- Theme Toggle Button -->
-  <div class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-  </div>
-
+  <!-- Theme Toggle -->
+  <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
   <header class="animate-fade">
     <div class="logo">
       <div class="logo-icon">P</div>
       <div class="logo-text">PrixTools</div>
     </div>
-    <p>Curated one-click installers for developers and power users</p>
+    <p>Curated one‑click installers for developers and power users</p>
   </header>
-
+  <!-- Search -->
   <div class="search-container animate-fade delay-1">
     <input type="text" class="search-input" id="searchInput" placeholder="Search applications...">
     <i class="fas fa-search search-icon"></i>
   </div>
-
+  <!-- Category filter -->
   <div class="category-filter animate-fade delay-2">
     <button class="category-btn active" data-category="all">All</button>
     <button class="category-btn" data-category="browser">Browsers</button>
@@ -346,196 +101,144 @@
     <button class="category-btn" data-category="utility">Utilities</button>
     <button class="category-btn" data-category="communication">Communication</button>
   </div>
-
+  <!-- App grid -->
   <div class="grid" id="appGrid">
     <!-- Browsers -->
-    <a href="https://dl.google.com/chrome/install/latest/chrome_installer.exe" download class="animate-fade delay-1" data-category="browser">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/chrome.png" alt="Chrome"/>
-        <span>Google Chrome</span>
-        <small>Secure web browser</small>
-      </div>
+    <a href="https://dl.google.com/chrome/install/latest/chrome_installer.exe" download
+       class="animate-fade delay-1" data-category="browser">
+      <div class="card"><i class="fab fa-chrome" style="font-size:48px;color:var(--accent);"></i>
+        <span>Google Chrome</span><small>Secure web browser</small></div>
     </a>
-
-    <a href="https://updates.bravesoftware.com/download/BraveBrowserSetup.exe" download class="animate-fade delay-2" data-category="browser">
-      <div class="card">
-        <img src="https://img.icons8.com/ios-filled/96/brave-web-browser.png" alt="Brave"/>
-        <span>Brave Browser</span>
-        <small>Privacy-first browser</small>
-      </div>
+    <a href="https://updates.bravesoftware.com/download/BraveBrowserSetup.exe" download
+       class="animate-fade delay-2" data-category="browser">
+      <div class="card"><i class="fab fa-brave-browser" style="font-size:48px;color:var(--accent);"></i>
+        <span>Brave Browser</span><small>Privacy‑first browser</small></div>
     </a>
-
     <!-- Development -->
-    <a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" download class="animate-fade delay-3" data-category="development">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/visual-studio-code-2019.png" alt="VS Code"/>
-        <span>VS Code</span>
-        <small>Code editor by Microsoft</small>
-      </div>
+    <a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" download
+       class="animate-fade delay-3" data-category="development">
+      <div class="card"><i class="fab fa-vscode" style="font-size:48px;color:var(--accent);"></i>
+        <span>VS Code</span><small>Code editor by Microsoft</small></div>
     </a>
-
-    <a href="https://github.com/notepad-plus-plus/notepad-plus-plus/releases/latest/download/npp.8.6.4.Installer.x64.exe" download class="animate-fade delay-4" data-category="development">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/notepad++.png" alt="Notepad++"/>
-        <span>Notepad++</span>
-        <small>Text/code editor</small>
-      </div>
+    <a href="https://github.com/notepad-plus-plus/notepad-plus-plus/releases/latest/download/npp.8.6.4.Installer.x64.exe"
+       download class="animate-fade delay-4" data-category="development">
+      <div class="card"><i class="fas fa-file-alt" style="font-size:48px;color:var(--accent);"></i>
+        <span>Notepad++</span><small>Text/code editor</small></div>
     </a>
-
-    <a href="https://github.com/git-for-windows/git/releases/latest/download/Git-2.44.0-64-bit.exe" download class="animate-fade delay-1" data-category="development">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/git.png" alt="Git"/>
-        <span>Git</span>
-        <small>Version control system</small>
-      </div>
+    <a href="https://github.com/git-for-windows/git/releases/latest/download/Git-2.44.0-64-bit.exe"
+       download class="animate-fade delay-1" data-category="development">
+      <div class="card"><i class="fab fa-git-alt" style="font-size:48px;color:var(--accent);"></i>
+        <span>Git</span><small>Version control system</small></div>
     </a>
-
-    <a href="https://nodejs.org/dist/v20.12.2/node-v20.12.2-x64.msi" download class="animate-fade delay-2" data-category="development">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/nodejs.png" alt="Node.js"/>
-        <span>Node.js LTS</span>
-        <small>JavaScript runtime</small>
-      </div>
+    <a href="https://nodejs.org/dist/v20.12.2/node-v20.12.2-x64.msi" download
+       class="animate-fade delay-2" data-category="development">
+      <div class="card"><i class="fab fa-node" style="font-size:48px;color:var(--accent);"></i>
+        <span>Node.js LTS</span><small>JavaScript runtime</small></div>
     </a>
-
-    <a href="https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe" download class="animate-fade delay-3" data-category="development">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/python--v1.png" alt="Python"/>
-        <span>Python 3</span>
-        <small>Programming language</small>
-      </div>
+    <a href="https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe"
+       download class="animate-fade delay-3" data-category="development">
+      <div class="card"><i class="fab fa-python" style="font-size:48px;color:var(--accent);"></i>
+        <span>Python 3</span><small>Programming language</small></div>
     </a>
-
     <!-- Utilities -->
-    <a href="https://www.7-zip.org/a/7z2301-x64.exe" download class="animate-fade delay-4" data-category="utility">
-      <div class="card">
-        <img src="https://img.icons8.com/fluency/96/7z.png" alt="7-Zip"/>
-        <span>7-Zip</span>
-        <small>File archiver & extractor</small>
-      </div>
+    <a href="https://www.7-zip.org/a/7z2301-x64.exe" download
+       class="animate-fade delay-4" data-category="utility">
+      <div class="card"><i class="fas fa-folder-archive" style="font-size:48px;color:var(--accent);"></i>
+        <span>7‑Zip</span><small>File archiver & extractor</small></div>
     </a>
-
-    <a href="https://www.videolan.org/vlc/download-windows.html" target="_blank" class="animate-fade delay-1" data-category="utility">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/vlc-media-player.png" alt="VLC"/>
-        <span>VLC Media Player</span>
-        <small>Open-source media player</small>
-      </div>
+    <a href="https://www.videolan.org/vlc/download-windows.html" target="_blank"
+       class="animate-fade delay-1" data-category="utility">
+      <div class="card"><i class="fab fa-vlc" style="font-size:48px;color:var(--accent);"></i>
+        <span>VLC Media Player</span><small>Open‑source media player</small></div>
     </a>
-
-    <a href="https://get.adobe.com/reader/download/?installer=Reader_DC_2023.008.20555_English_for_Windows&standalone=1" target="_blank" class="animate-fade delay-2" data-category="utility">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/adobe-acrobat-reader.png" alt="Adobe Reader"/>
-        <span>Acrobat Reader</span>
-        <small>View PDF documents</small>
-      </div>
+    <a href="https://get.adobe.com/reader/download/?installer=Reader_DC_2023.008.20555_English_for_Windows&standalone=1"
+       target="_blank" class="animate-fade delay-2" data-category="utility">
+      <div class="card"><i class="fas fa-file-pdf" style="font-size:48px;color:var(--accent);"></i>
+        <span>Acrobat Reader</span><small>View PDF documents</small></div>
     </a>
-
     <!-- Communication -->
-    <a href="https://zoom.us/client/latest/ZoomInstaller.exe" download class="animate-fade delay-3" data-category="communication">
-      <div class="card">
-        <img src="https://img.icons8.com/fluency/96/zoom.png" alt="Zoom"/>
-        <span>Zoom</span>
-        <small>Meetings & video calls</small>
-      </div>
+    <a href="https://zoom.us/client/latest/ZoomInstaller.exe" download
+       class="animate-fade delay-3" data-category="communication">
+      <div class="card"><i class="fas fa-video" style="font-size:48px;color:var(--accent);"></i>
+        <span>Zoom</span><small>Meetings & video calls</small></div>
     </a>
-
-    <a href="https://discord.com/api/download?platform=win" download class="animate-fade delay-4" data-category="communication">
-      <div class="card">
-        <img src="https://img.icons8.com/color/96/discord--v2.png" alt="Discord"/>
-        <span>Discord</span>
-        <small>Community & voice chat</small>
-      </div>
+    <a href="https://discord.com/api/download?platform=win" download
+       class="animate-fade delay-4" data-category="communication">
+      <div class="card"><i class="fab fa-discord" style="font-size:48px;color:var(--accent);"></i>
+        <span>Discord</span><small>Community & voice chat</small></div>
+    </a>
+    <!-- NEW CARD – Advanced Toolkit (same /advance endpoint) -->
+    <a href="/advance" class="animate-fade delay-1" data-category="utility">
+      <div class="card"><i class="fas fa-tools" style="font-size:48px;color:var(--accent);"></i>
+        <span>Advanced Toolkit</span><small>Run Chris Titus scripts</small></div>
     </a>
   </div>
-
+  <!-- Footer -->
   <div class="footer animate-fade delay-3">
-    <p>Curated with <i class="fas fa-heart" style="color: var(--accent);"></i> by Priyanshu</p>
+    <p>Curated with <i class="fas fa-heart" style="color:var(--accent);"></i> by Priyanshu</p>
     <p>Part of the <a href="#">PrixTools</a> collection</p>
   </div>
-
+  <!-- Floating “5” button (no page navigation, just a quick request) -->
+  <button id="btn5" style="
+      position:fixed;bottom:20px;right:20px;z-index:100;padding:12px 18px;font-size:1.4rem;
+      background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);
+      cursor:pointer;box-shadow:var(--shadow);transition:transform .2s ease;">
+    5
+  </button>
+  <!-- Scripts -->
   <script>
-    // Theme Toggle Functionality
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    let isDarkMode = true;
-
-    if (localStorage.getItem('theme') === 'light') {
-      setLightMode();
-    }
-
-    themeToggle.addEventListener('click', () => {
-      if (isDarkMode) {
-        setLightMode();
-      } else {
-        setDarkMode();
-      }
+    /*--- Theme toggle ---*/
+    const themeToggle=document.getElementById('themeToggle');
+    const body=document.body;
+    let isDarkMode=true;
+    if(localStorage.getItem('theme')==='light') setLightMode();
+    themeToggle.addEventListener('click',()=>{
+      isDarkMode?setLightMode():setDarkMode();
     });
-
-    function setLightMode() {
-      body.setAttribute('data-theme', 'light');
-      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-      isDarkMode = false;
-      localStorage.setItem('theme', 'light');
-    }
-
-    function setDarkMode() {
-      body.removeAttribute('data-theme');
-      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-      isDarkMode = true;
-      localStorage.setItem('theme', 'dark');
-    }
-
-    // Search and Filter Functionality
-    const searchInput = document.getElementById('searchInput');
-    const categoryBtns = document.querySelectorAll('.category-btn');
-    let currentCategory = 'all';
-    
-    searchInput.addEventListener('input', filterApps);
-    
-    categoryBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        categoryBtns.forEach(b => b.classList.remove('active'));
+    function setLightMode(){body.setAttribute('data-theme','light');themeToggle.innerHTML='<i class="fas fa-sun"></i>';isDarkMode=false;localStorage.setItem('theme','light');}
+    function setDarkMode(){body.removeAttribute('data-theme');themeToggle.innerHTML='<i class="fas fa-moon"></i>';isDarkMode=true;localStorage.setItem('theme','dark');}
+    /*--- Search & filter ---*/
+    const searchInput=document.getElementById('searchInput');
+    const categoryBtns=document.querySelectorAll('.category-btn');
+    let currentCategory='all';
+    searchInput.addEventListener('input',filterApps);
+    categoryBtns.forEach(btn=>{
+      btn.addEventListener('click',function(){
+        categoryBtns.forEach(b=>b.classList.remove('active'));
         this.classList.add('active');
-        currentCategory = this.dataset.category;
-        filterApps();
+        currentCategory=this.dataset.category;filterApps();
       });
     });
-
-    function filterApps() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const apps = document.querySelectorAll('#appGrid a');
-      
-      apps.forEach(app => {
-        const appCategory = app.dataset.category;
-        const title = app.querySelector('span').textContent.toLowerCase();
-        const desc = app.querySelector('small').textContent.toLowerCase();
-        
-        const categoryMatch = currentCategory === 'all' || appCategory === currentCategory;
-        const searchMatch = searchTerm === '' || title.includes(searchTerm) || desc.includes(searchTerm);
-        
-        app.style.display = (categoryMatch && searchMatch) ? 'block' : 'none';
+    function filterApps(){
+      const term=searchInput.value.toLowerCase();
+      document.querySelectorAll('#appGrid a').forEach(app=>{
+        const cat=app.dataset.category;
+        const title=app.querySelector('span').textContent.toLowerCase();
+        const desc=app.querySelector('small').textContent.toLowerCase();
+        const catMatch=currentCategory==='all'||cat===currentCategory;
+        const termMatch=term=== ''||title.includes(term)||desc.includes(term);
+        app.style.display=(catMatch&&termMatch)?'block':'none';
       });
     }
-
-    // Card hover effects
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const angleX = (y - centerY) / 20;
-        const angleY = (centerX - x) / 20;
-        card.style.transform = `translateY(-8px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
+    /*--- Card 3‑D hover effect ---*/
+    document.querySelectorAll('.card').forEach(card=>{
+      card.addEventListener('mousemove',e=>{
+        const rect=card.getBoundingClientRect();
+        const x=e.clientX-rect.left, y=e.clientY-rect.top;
+        const cx=rect.width/2, cy=rect.height/2;
+        const ax=(y-cy)/20, ay=(cx-x)/20;
+        card.style.transform=translateY(-8px) rotateX(${ax}deg) rotateY(${ay}deg) scale(1.02);
       });
-      
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(-8px) rotateX(0) rotateY(0) scale(1.02)';
-      });
+      card.addEventListener('mouseleave',()=>card.style.transform='translateY(-8px) rotateX(0) rotateY(0) scale(1.02)');
     });
+    /*--- New “5” button – quick /advance request ---*/
+    const btn5=document.getElementById('btn5');
+    if(btn5){
+      btn5.addEventListener('click',()=>{fetch('/advance').catch(err=>console.error(err));});
+      btn5.addEventListener('mouseover',()=>btn5.style.transform='scale(1.1)');
+      btn5.addEventListener('mouseout',()=>btn5.style.transform='scale(1.0)');
+    }
   </script>
 </body>
 </html>
+translateY(-8px) rotateX(${ax}deg) rotateY(${ay}deg) scale(1.02)
